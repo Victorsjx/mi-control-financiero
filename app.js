@@ -3,6 +3,7 @@ const STORAGE_KEY = "mi-control-financiero-v1";
 const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
 const expenseCategoryOptions = [{name:"Transporte",icon:"↗"},{name:"Comida",icon:"◉"},{name:"Salidas",icon:"✦"},{name:"Otros",icon:"···"}];
 const incomeCategories = ["Sueldo","Bonos","Ventas","Devoluciones","Otros ingresos"];
+const incomeCategoryOptions = [{name:"Sueldo",icon:"＋"},{name:"Bonos",icon:"✧"},{name:"Ventas",icon:"↗"},{name:"Devoluciones",icon:"↩"},{name:"Otros ingresos",icon:"···"}];
 const categoryIcons = {"Comida":"◉","Alimentación":"◉","Transporte":"↗","Salidas":"✦","Entretenimiento":"✦","Otros":"···","Sueldo":"＋","Bonos":"✧","Ventas":"↗","Devoluciones":"↩","Otros ingresos":"＋"};
 const palette = ["#5bd6a2","#a78bfa","#76a9fa","#ffb86b","#ff7887","#5bd6c5","#e6cf6b","#d58cf2","#8fa8bc","#d28f7c","#75c8e8","#b6d66c"];
 let state = loadState();
@@ -82,7 +83,7 @@ function renderComparison(key){
   const msg=diff===0?"Mismo nivel de gastos":diff<0?`Gastaste ${money(Math.abs(diff))} menos que el mes anterior`:`Gastaste ${money(diff)} más que el mes anterior`;
   $("comparison").innerHTML=`<div class="compare-row"><span>${d.toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill" style="width:${cur.expense/max*100}%"></div></div><strong>${money(cur.expense)}</strong></div><div class="compare-row"><span>${monthDate(prev).toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill old-fill" style="width:${old.expense/max*100}%"></div></div><strong>${money(old.expense)}</strong></div><div class="budget-status">${msg}</div>`;
 }
-function renderExpenseCategoryPicker(selected){$("expenseCategoryPicker").innerHTML=expenseCategoryOptions.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");$("expenseCategoryPicker").querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;$("expenseCategoryPicker").querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
+function renderCategoryPicker(type,selected){const picker=$(type==="expense"?"expenseCategoryPicker":"incomeCategoryPicker");const options=type==="expense"?expenseCategoryOptions:incomeCategoryOptions;picker.innerHTML=options.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");picker.querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;picker.querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
 function openTransaction(type,tx=null){
   $("transactionType").value=type;$("transactionId").value=tx?.id||"";
   $("formTitle").textContent=tx?"Editar movimiento":type==="expense"?"Añadir gasto":"Añadir ingreso";
@@ -92,9 +93,10 @@ function openTransaction(type,tx=null){
   const initialCategory=tx?(type==="expense"?normalizeExpenseCategory(tx.category):tx.category):cats[0];
   $("category").value=initialCategory;
   $("expenseCategoryPicker").style.display=type==="expense"?"grid":"none";
-  $("category").style.display=type==="income"?"block":"none";
+  $("incomeCategoryPicker").style.display=type==="income"?"grid":"none";
+  $("category").style.display="none";
   $("categoryLabel").textContent=type==="expense"?"¿En qué gastaste?":"Categoría";
-  if(type==="expense")renderExpenseCategoryPicker(initialCategory);
+  renderCategoryPicker(type,initialCategory);
   $("amount").value=tx?.amount||"";$("description").value=tx?.description||"";
   $("date").value=tx?.date||new Date().toISOString().slice(0,10);
   $("saveTransaction").textContent=tx?"Guardar cambios":"Guardar movimiento";
