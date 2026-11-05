@@ -79,3 +79,20 @@ dialog{background:#1b2a3e;color:#edf2fa;border-color:#35465e;box-shadow:0 25px 8
 .bottom-nav .nav-add span{width:48px;height:48px;border-radius:50%;font-size:29px;box-shadow:0 7px 20px #7865ec55}
 @media(min-width:700px){.screen-page{max-width:760px}.screen-page .history-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:390px){.screen-page{padding-top:12px}.screen-page>.modal-head h2{font-size:25px}.screen-page .history-tools{gap:7px}.screen-page .history-tools select{padding:0 9px;font-size:12px}.bottom-nav .nav-add span{width:44px;height:44px}}
+
+/* v14 · Lucide-inspired outline icon system */
+.ui-icon{display:inline-block;width:20px;height:20px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.nav-item>.ui-icon{width:21px;height:21px;stroke-width:1.75}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.nav-add>.ui-icon{width:25px;height:25px;stroke-width:2}
+.nav-add{gap:3px}
+.icon-btn .ui-icon,.close-btn .ui-icon{width:20px;height:20px}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.action-btn .ui-icon{width:18px;height:18px}
+.metric-icon{display:grid;place-items:center}
+.metric-icon .ui-icon{width:19px;height:19px;stroke-width:1.85}
+.tx-icon{display:grid;place-items:center}
+.tx-icon .ui-icon{width:19px;height:19px;stroke-width:1.8}
+.category-option-icon{display:grid;place-items:center}
+.category-option-icon .ui-icon{width:21px;height:21px;stroke-width:1.8}
+.close-btn{display:grid;place-items:center}
