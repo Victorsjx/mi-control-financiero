@@ -291,3 +291,10 @@ dialog{max-height:min(88dvh,760px);overscroll-behavior:contain}
 
 /* v28: asegurar contraste y visibilidad del saludo */
 #welcomeGreeting.welcome-greeting{display:flex!important;visibility:visible!important;opacity:1!important;min-height:42px!important;padding:11px 15px!important;color:#f3f6ff!important;background:#263653!important;border:1px solid #64749a!important;font-size:13px!important;font-weight:800!important;line-height:1.4!important;letter-spacing:.15px!important;text-align:left!important;}
+
+/* v30: preferencias del asistente */
+.assistant-settings{padding:15px;margin:0 0 14px;border:1px solid #394d68;border-radius:15px;background:#202f45;color:#edf2fa}
+.assistant-settings h3{margin:5px 0 12px;font-size:16px}
+.assistant-settings label{display:block;margin:12px 0 6px;color:#b0bfd1;font-size:11px;font-weight:750}
+.assistant-settings select{display:block;width:100%;min-height:44px;padding:10px 12px;border:1px solid #455873;border-radius:11px;background:#111d2d;color:#edf2fa;font:inherit;font-size:13px}
+.assistant-settings p{margin:12px 0 0;color:#a7b7ca;font-size:11px;line-height:1.6}
