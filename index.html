@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -36,8 +36,8 @@
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
         <div class="metric-grid">
-          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de cierre</div><strong id="projection">$0</strong><small id="projectionHint">Balance estimado al cierre</small></article>
-          <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Ahorro del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
+          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Balance estimado al cierre</small></article>
+          <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Saldo neto del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
           <article class="metric-card"><div class="metric-icon blue">▤</div><div class="muted-label">Movimientos</div><strong id="movementCount">0</strong><small>Registros del mes</small></article>
           <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article><article class="metric-card"><div class="metric-icon teal">%</div><div class="muted-label">Tasa de ahorro</div><strong id="savingRate">0%</strong><small id="savingRateHint">Ahorro sobre ingresos</small></article><article class="metric-card"><div class="metric-icon blue">◷</div><div class="muted-label">Disponible diario</div><strong id="dailyAvailable">$0</strong><small id="dailyAvailableHint">Según tu presupuesto</small></article>
         </div>
@@ -102,6 +102,6 @@
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
