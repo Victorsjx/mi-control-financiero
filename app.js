@@ -389,7 +389,7 @@ const welcomeMessages=[
  "¡Bienvenido, leyenda! ✨",
  "¡Qué pasa, jefe supremo! 👑"
 ];
-window.setTimeout(()=>showToast(welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)]),450);
+$("welcomeGreeting").textContent=welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)];
 
 
 document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEach(button=>{
