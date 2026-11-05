@@ -149,7 +149,7 @@ $("transactionForm").onsubmit=e=>{
 };
 $("monthSelect").onchange=e=>{selectedMonth=e.target.value;render()};
 $("showAll").onclick=()=>openHistory();
-function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").value="all";$("historyCategory").value="all";$("historyFrom").value="";$("historyTo").value="";$("historySearch").value="";populateHistoryCategories();renderHistory();$("historyDialog").showModal()}
+function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").value="all";$("historyCategory").value="all";$("historyFrom").value="";$("historyTo").value="";$("historySearch").value="";populateHistoryCategories();renderHistory()}
 function filteredHistory(){
   const key=$("historyMonth").value,type=$("historyType").value,category=$("historyCategory").value;
   const from=$("historyFrom").value,to=$("historyTo").value,q=$("historySearch").value.trim().toLocaleLowerCase("es-CL");
@@ -161,7 +161,7 @@ function renderHistory(){
   const inc=a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0),exp=a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0);
   $("historySummary").textContent=`${a.length} movimientos · Ingresos ${money(inc)} · Gastos ${money(exp)} · Balance ${money(inc-exp)}`;
   $("fullHistory").innerHTML=a.length?a.map(x=>`${txHTML(x,true)}<div class="history-actions"><button class="mini-action edit-tx" data-id="${escapeHTML(x.id)}">Editar</button><button class="mini-action delete-tx" data-id="${escapeHTML(x.id)}">Eliminar</button></div>`).join(""):'<div class="empty-state">No hay movimientos para este filtro.</div>';
-  document.querySelectorAll(".edit-tx").forEach(b=>b.onclick=()=>{const tx=state.transactions.find(x=>x.id===b.dataset.id);if(tx){$("historyDialog").close();openTransaction(tx.type,tx)}});
+  document.querySelectorAll(".edit-tx").forEach(b=>b.onclick=()=>{const tx=state.transactions.find(x=>x.id===b.dataset.id);if(tx){switchTab("add");openTransaction(tx.type,tx)}});
   document.querySelectorAll(".delete-tx").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar este movimiento?")){state.transactions=state.transactions.filter(x=>x.id!==b.dataset.id);saveState();render();renderHistory();showToast("Movimiento eliminado")}});
 }
 function populateHistoryCategories(){
@@ -170,8 +170,8 @@ function populateHistoryCategories(){
   $("historyCategory").innerHTML='<option value="all">Todas las categorías</option>'+categories.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
   $("historyCategory").value=categories.includes(current)?current:"all";
 }
-$("historyMonth").onchange=renderHistory;$("historyType").onchange=renderHistory;$("historyCategory").onchange=renderHistory;$("historyFrom").onchange=renderHistory;$("historyTo").onchange=renderHistory;$("historySearch").oninput=renderHistory;$("closeHistory").onclick=()=>$("historyDialog").close();
-$("closeBudget").onclick=()=>$("budgetDialog").close();
+$("historyMonth").onchange=renderHistory;$("historyType").onchange=renderHistory;$("historyCategory").onchange=renderHistory;$("historyFrom").onchange=renderHistory;$("historyTo").onchange=renderHistory;$("historySearch").oninput=renderHistory;$("closeHistory").onclick=()=>switchTab("home");
+$("closeBudget").onclick=()=>switchTab("home");
 function openBudget(){
   $("budgetAmount").value=state.budgets[selectedMonth]??"";
   const spent=totals(selectedMonth).expense,limit=Number(state.budgets[selectedMonth]||0);
@@ -182,7 +182,7 @@ function openBudget(){
     const cap=Number(saved[category]||0),percent=cap?Math.min(used/cap*100,100):0;
     return `<div class="category-budget-card"><label class="category-budget-row"><span><strong>${category}</strong><small>Gastado: ${money(used)}${cap?` · ${used>cap?"Excedido por "+money(used-cap):"Disponible "+money(cap-used)}`:""}</small></span><input type="number" min="0" step="1000" inputmode="numeric" data-budget-category="${category}" value="${saved[category]??""}" placeholder="Sin límite" aria-label="Presupuesto para ${category}"></label><div class="category-budget-track"><span class="${cap&&used>cap?"over":""}" style="width:${percent}%"></span></div></div>`;
   }).join("");
-  $("budgetDialog").showModal();
+
 }
 $("saveBudget").onclick=()=>{
   const raw=$("budgetAmount").value,n=Number(raw);
@@ -195,7 +195,7 @@ $("saveBudget").onclick=()=>{
   }
   if(raw==="")delete state.budgets[selectedMonth];else state.budgets[selectedMonth]=n;
   if(Object.keys(categoryLimits).length)state.categoryBudgets[selectedMonth]=categoryLimits;else delete state.categoryBudgets[selectedMonth];
-  saveState();$("budgetDialog").close();render();showToast("Sueldo y límites actualizados");
+  saveState();render();showToast("Sueldo y límites actualizados");switchTab("budget");
 };
 $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").onclick=()=>$("settingsDialog").showModal();
 $("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
@@ -211,11 +211,18 @@ $("exportCsv").onclick=()=>{
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
 };
-function switchTab(tab){document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));const visibleTab=(tab==="budget"||tab==="history"||tab==="add")?"home":tab;document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==visibleTab});window.scrollTo({top:0,behavior:"smooth"});if(tab==="add"){openTransaction("expense");return}if(tab==="budget"){openBudget();return}if(tab==="history"){openHistory();return}if(tab==="home")render();if(tab==="analytics")renderAnalytics();if(tab==="goals")renderGoals()}document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function switchTab(tab){
+ document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+ document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==tab});
+ window.scrollTo({top:0,behavior:"smooth"});
+ if(tab==="add"){openTransaction("expense");return}
+ if(tab==="home")render();
+ if(tab==="analytics")renderAnalytics();
+ if(tab==="history")openHistory();
+ if(tab==="budget")openBudget();
+}
+document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+$("showAll").onclick=()=>switchTab("history");
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
 
-function renderGoals(){const goals=state.goals||[],target=goals.reduce((s,g)=>s+Number(g.target||0),0),saved=goals.reduce((s,g)=>s+Number(g.saved||0),0);$("goalsTotal").textContent=money(saved);$("goalsCaption").textContent=goals.length?money(saved)+" de "+money(target)+" acumulados entre "+goals.length+" meta"+(goals.length===1?"":"s"):"Aún no tienes metas activas";$("goalsList").innerHTML=goals.length?goals.map(g=>{const p=Math.min(100,Number(g.saved)/Number(g.target)*100);return '<article class="goal-card"><div class="goal-head"><strong>'+escapeHTML(g.name)+'</strong><span>'+Math.round(p)+'%</span></div><div class="goal-track"><span style="width:'+p+'%"></span></div><div class="goal-foot"><span>'+money(g.saved)+' ahorrados</span><strong>'+money(g.target)+'</strong></div><div class="goal-actions"><button class="mini-action" data-goal-edit="'+escapeHTML(g.id)+'">Editar</button><button class="mini-action delete-tx" data-goal-delete="'+escapeHTML(g.id)+'">Eliminar</button></div></article>'}).join(""):'<div class="empty-state">Crea una meta para darle un destino concreto a tu ahorro.</div>';document.querySelectorAll("[data-goal-edit]").forEach(b=>b.onclick=()=>editGoal(b.dataset.goalEdit));document.querySelectorAll("[data-goal-delete]").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar esta meta?")){state.goals=goals.filter(g=>g.id!==b.dataset.goalDelete);saveState();renderGoals()}})}
-function editGoal(id=""){const g=(state.goals||[]).find(x=>x.id===id);$("goalId").value=g?.id||"";$("goalDialogTitle").textContent=g?"Editar meta":"Nueva meta";$("goalName").value=g?.name||"";$("goalTarget").value=g?.target||"";$("goalSaved").value=g?.saved??"";$("goalDialog").showModal()}
-$("addGoal").onclick=()=>editGoal();$("closeGoal").onclick=()=>$("goalDialog").close();
-$("saveGoal").onclick=()=>{const name=$("goalName").value.trim(),target=Number($("goalTarget").value),saved=Number($("goalSaved").value||0),id=$("goalId").value;if(!name||!Number.isSafeInteger(target)||target<=0||!Number.isSafeInteger(saved)||saved<0){showToast("Revisa el nombre y los montos de la meta");return}const item={id:id||makeId(),name,target,saved};if(!Array.isArray(state.goals))state.goals=[];const i=state.goals.findIndex(g=>g.id===id);if(i>=0)state.goals[i]=item;else state.goals.push(item);saveState();$("goalDialog").close();renderGoals();showToast("Meta guardada")};
