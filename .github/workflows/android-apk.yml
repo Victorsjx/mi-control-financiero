@@ -41,6 +41,9 @@ jobs:
       - name: Instalar Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Instalar plataforma Android 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+
       - name: Instalar dependencias Capacitor
         run: npm install --no-audit --no-fund
 
