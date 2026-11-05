@@ -20,6 +20,22 @@
       <button class="icon-btn" id="settingsBtn" aria-label="Configuración"><svg class="ui-icon" data-icon="sliders-horizontal" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 21v-7m0-4V3M12 21v-9m0-4V3m8 18v-5m0-4V3"/><path d="M2 14h4m4-6h4m4 8h4"/></svg></button>
     </header>
     <div id="welcomeGreeting" class="welcome-greeting" role="status" aria-live="polite">👑 ¡Hola, jefe! Bienvenido a Mi Finanzas.</div>
+    <script>
+      (() => {
+        const greetings = [
+          "👑 ¡Hola, jefe! ¿Listo para dominar tus finanzas?",
+          "😎 ¡Bienvenido de vuelta, lord!",
+          "🚀 ¡Qué bueno verte, comandante!",
+          "🫡 ¡A sus órdenes, patrón!",
+          "💸 ¡Hola, crack! Vamos a poner esas lucas en orden.",
+          "📊 ¡El jefe volvió! Que hablen los números.",
+          "✨ ¡Bienvenido, leyenda!",
+          "👑 ¡Qué pasa, jefe supremo!"
+        ];
+        const greeting = document.getElementById("welcomeGreeting");
+        if (greeting) greeting.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+      })();
+    </script>
     <main>
       <section data-view="home" class="hero-card">
         <div class="hero-top"><div><div class="muted-label">BALANCE DEL MES</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
