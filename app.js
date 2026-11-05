@@ -1,9 +1,9 @@
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = "mi-control-financiero-v1";
 const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
-const expenseCategoryOptions = [{name:"Transporte",icon:"🚌"},{name:"Comida",icon:"🍔"},{name:"Salidas",icon:"🎉"},{name:"Otros",icon:"📦"}];
+const expenseCategoryOptions = [{name:"Transporte",icon:"↗"},{name:"Comida",icon:"◉"},{name:"Salidas",icon:"✦"},{name:"Otros",icon:"···"}];
 const incomeCategories = ["Sueldo","Bonos","Ventas","Devoluciones","Otros ingresos"];
-const categoryIcons = {"Comida":"🍔","Alimentación":"🍔","Transporte":"🚌","Salidas":"🎉","Entretenimiento":"🎉","Otros":"📦","Sueldo":"💼","Bonos":"✨","Ventas":"🪙","Devoluciones":"↩️","Otros ingresos":"💰"};
+const categoryIcons = {"Comida":"◉","Alimentación":"◉","Transporte":"↗","Salidas":"✦","Entretenimiento":"✦","Otros":"···","Sueldo":"＋","Bonos":"✧","Ventas":"↗","Devoluciones":"↩","Otros ingresos":"＋"};
 const palette = ["#5bd6a2","#a78bfa","#76a9fa","#ffb86b","#ff7887","#5bd6c5","#e6cf6b","#d58cf2","#8fa8bc","#d28f7c","#75c8e8","#b6d66c"];
 let state = loadState();
 let selectedMonth = monthKey(new Date());
@@ -73,7 +73,7 @@ function renderDonut(key,total){
 }
 function txHTML(x,editable=false){
   const sign=x.type==="income"?"+":"−";
-  return `<div class="transaction"><div class="tx-icon">${categoryIcons[x.category]||"📌"}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
+  return `<div class="transaction"><div class="tx-icon">${categoryIcons[x.category]||"•"}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
 }
 function renderRecent(key){const a=transactionsFor(key).sort((x,y)=>y.date.localeCompare(x.date)).slice(0,5);$("recentList").innerHTML=a.length?a.map(x=>txHTML(x)).join(""):'<div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div>'}
 function renderComparison(key){
