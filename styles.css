@@ -241,3 +241,45 @@ button,.action-btn,.nav-item{transition-duration:240ms!important}
 #receiptFile{font-size:12px;padding:10px!important}
 #receiptConfidence{padding:10px 0;line-height:1.6}
 @media(max-width:430px){.quick-actions{grid-template-columns:1fr 1fr}.receipt-action{grid-column:1/-1}}
+
+/* v22 · legibilidad, accesibilidad y acabado adaptable */
+body{font-size:14px;line-height:1.5}
+.topbar{padding-top:19px;padding-bottom:18px}
+.eyebrow{font-size:10px;letter-spacing:1.55px}
+.section-heading{margin-bottom:13px}
+.section-heading h2{font-size:17px;letter-spacing:-.35px}
+.metric-grid{gap:10px}
+.metric-card{min-height:112px;padding:14px}
+.metric-card .muted-label{font-size:9px;letter-spacing:.55px;line-height:1.35}
+.metric-card strong{font-size:clamp(16px,4.3vw,20px);letter-spacing:-.35px}
+.metric-card small{font-size:10px;line-height:1.5}
+.transaction{gap:11px;padding:12px 0}
+.tx-title{font-size:13px}.tx-sub{font-size:11px;line-height:1.4}.tx-amount{font-size:13px}
+.empty-state{font-size:12px}
+.action-btn{min-height:48px;font-size:12px}
+.receipt-action{background:linear-gradient(135deg,#24483f,#1c3940);color:#a9ead4;border-color:#376457}
+.section-heading select,.history-tools select{min-height:40px;font-size:12px}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:0;box-shadow:0 0 0 3px #9585ff66!important;border-color:#a99cff!important}
+button:disabled{cursor:not-allowed;opacity:.55;transform:none!important}
+.modal-copy,.tiny-note{font-size:12px;line-height:1.65}
+.modal label{font-size:12px}
+.modal input:not([type=file]),.modal select,.history-date-filters input{min-height:48px}
+.submit-btn,.outline-btn,.danger-btn{min-height:48px;font-size:13px}
+.progress-caption{font-size:11px;line-height:1.4}
+.legend-row{font-size:12px}.legend-row strong{font-size:12px}
+.receipt-review-note{font-size:12px;line-height:1.6}
+.receipt-preview span{min-width:0;overflow-wrap:anywhere}
+dialog{max-height:min(88dvh,760px);overscroll-behavior:contain}
+@media(max-width:430px){
+ .app-shell{padding-left:13px;padding-right:13px}
+ .hero-card{padding:18px}
+ .balance{font-size:clamp(29px,8.2vw,39px)}
+ .section{margin-bottom:23px}
+ .metric-card{padding:12px;min-height:108px}
+ .metric-card small{font-size:9px}
+ .chart-card{grid-template-columns:112px minmax(0,1fr);padding:12px;gap:10px}
+ .donut{min-width:104px;min-height:104px}
+ .legend{gap:9px}.legend-row{font-size:10px;gap:6px}.legend-row strong{font-size:10px}
+}
+@media(max-width:350px){.chart-card{grid-template-columns:1fr}.donut{width:124px;height:124px;justify-self:center}.hero-top{flex-wrap:wrap}.month-chip{margin-left:auto}}
