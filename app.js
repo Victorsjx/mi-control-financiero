@@ -56,14 +56,51 @@ function render(){
   $("spentPercent").textContent=budget?Math.round(ratio)+"% del presupuesto usado":(t.income?Math.round(t.expense/t.income*100)+"% de ingresos gastados":"Sin presupuesto definido");
   $("budgetCaption").textContent=budget?money(budget)+" presupuesto":"Configura tu límite";
   $("budgetCaption").classList.toggle("warning-text",budget>0&&t.expense>budget);
-  const projection=isCurrent?t.expense/elapsed*daysInMonth:t.expense;
-  $("projection").textContent=money(projection);
-  $("projectionHint").textContent=isCurrent?"Estimación al cierre del mes":"Total registrado del mes";
+  const projectedExpense=isCurrent?t.expense/elapsed*daysInMonth:t.expense;
+  const projectedIncome=isCurrent?t.income/elapsed*daysInMonth:t.income;
+  $("projection").textContent=money(projectedIncome-projectedExpense);
+  $("projectionHint").textContent=isCurrent?"Balance estimado al cierre":"Balance registrado del mes";
   $("saving").textContent=money(net);$("savingHint").textContent=net>=0?"Ingresos menos gastos":"Has gastado más de lo ingresado";
   $("movementCount").textContent=transactionsFor(key).length;
   $("dailyAverage").textContent=money(t.expense/elapsed);
-  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);
+  $("savingRate").textContent=t.income?Math.round(net/t.income*100)+"%":"—";
+  $("savingRateHint").textContent=t.income?"Ahorro sobre ingresos":"Registra ingresos para calcularlo";
+  const daysLeft=isCurrent?Math.max(1,daysInMonth-now.getDate()+1):1;
+  $("dailyAvailable").textContent=budget?money(Math.max(0,budget-t.expense)/daysLeft):"—";
+  $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" de presupuesto restante":"Define un presupuesto mensual";
+  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();
 }
+function localDateInput(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function renderSmartPanel(key,t,budget,net){
+ const prev=monthDate(key);const oldKey=monthKey(new Date(prev.getFullYear(),prev.getMonth()-1,1));const old=totals(oldKey);let msg;
+ if(budget&&t.expense>budget)msg="Superaste tu presupuesto por "+money(t.expense-budget)+". Revisa tus próximos gastos.";
+ else if(budget&&t.expense>=budget*.9)msg="Atención: utilizaste "+Math.round(t.expense/budget*100)+"% de tu presupuesto mensual.";
+ else if(net<0)msg="Tus gastos superan tus ingresos este mes. Revisa tus categorías de mayor consumo.";
+ else if(t.income)msg="Tu balance es positivo: "+money(net)+". Mantén el control de tus gastos.";
+ else msg="Registra ingresos y gastos para recibir recomendaciones basadas en tus movimientos.";
+ if(old.expense>0){const delta=Math.round((t.expense-old.expense)/old.expense*100);msg+=" Tus gastos están "+Math.abs(delta)+"% "+(delta>0?"sobre":"bajo")+" el mes anterior.";}
+ $("smartInsights").textContent=msg;
+ const saved=state.categoryBudgets[key]||{};
+ $("dashboardCategoryBudgets").innerHTML=expenseCategories.map(cat=>{const used=transactionsFor(key,"expense").filter(x=>normalizeExpenseCategory(x.category)===cat).reduce((s,x)=>s+x.amount,0);const cap=Number(saved[cat]||0);if(!cap)return "";const p=used/cap*100;return '<div class="dashboard-budget-row"><div class="dashboard-budget-top"><strong>'+cat+'</strong><span>'+money(used)+' / '+money(cap)+'</span></div><div class="category-budget-track"><span class="'+(p>=100?"over":"")+'" style="width:'+Math.min(100,p)+'%"></span></div><small>'+(p>=100?"Límite superado":Math.round(p)+"% utilizado")+'</small></div>';}).join("")||'<div class="empty-state">Configura límites por categoría en Presupuesto para ver su avance aquí.</div>';
+}
+function renderAnalytics(){
+ const d=monthDate(selectedMonth);const keys=Array.from({length:6},(_,i)=>monthKey(new Date(d.getFullYear(),d.getMonth()-5+i,1)));
+ const rows=keys.map(k=>({key:k,label:monthDate(k).toLocaleDateString("es-CL",{month:"short"}),...totals(k)}));
+ const inc=rows.reduce((s,x)=>s+x.income,0),exp=rows.reduce((s,x)=>s+x.expense,0);$("sixIncome").textContent=money(inc);$("sixExpense").textContent=money(exp);$("sixBalance").textContent=money(inc-exp);$("sixSavingRate").textContent=inc?Math.round((inc-exp)/inc*100)+"%":"—";
+ const max=Math.max(1,...rows.flatMap(x=>[x.income,x.expense]));
+ $("trendChart").innerHTML=rows.some(x=>x.income||x.expense)?'<div class="bar-chart">'+rows.map(x=>'<div class="bar-month"><span>'+x.label+'</span><div class="bar-pair"><i class="bar-income" style="height:'+Math.max(2,x.income/max*100)+'%"></i><i class="bar-expense" style="height:'+Math.max(2,x.expense/max*100)+'%"></i></div><small>'+money(x.income)+' / '+money(x.expense)+'</small></div>').join("")+'</div><div class="chart-key"><span>Ingresos</span><span>Gastos</span></div>':'<div class="empty-state">Registra movimientos para ver tus últimos seis meses.</div>';
+ const maxNet=Math.max(1,...rows.map(x=>Math.abs(x.income-x.expense)));$("balanceChart").innerHTML=rows.map(x=>'<div class="ranking-row"><div class="ranking-label"><span>'+monthName(x.key)+'</span><strong>'+money(x.income-x.expense)+'</strong></div><div class="category-budget-track"><span style="width:'+Math.abs(x.income-x.expense)/maxNet*100+'%"></span></div></div>').join("");
+ function ranking(type){const map={};state.transactions.filter(x=>x.type===type&&keys.includes(x.date.slice(0,7))).forEach(x=>map[x.category]=(map[x.category]||0)+x.amount);return Object.entries(map).sort((x,y)=>y[1]-x[1]);}
+ function rankingHTML(list){const total=list.reduce((s,x)=>s+x[1],0);return total?list.map((x,i)=>'<div class="ranking-row"><div class="ranking-label"><span>'+escapeHTML(x[0])+'</span><strong>'+money(x[1])+'</strong></div><div class="category-budget-track"><span style="width:'+x[1]/total*100+'%"></span></div><small>'+Math.round(x[1]/total*100)+'% del total</small></div>').join(""):'<div class="empty-state">Aún no hay movimientos suficientes.</div>'}
+ const ex=ranking("expense"),ins=ranking("income");$("expenseRanking").innerHTML=rankingHTML(ex);$("incomeRanking").innerHTML=rankingHTML(ins);
+ const cur=totals(selectedMonth),pd=monthDate(selectedMonth),pk=monthKey(new Date(pd.getFullYear(),pd.getMonth()-1,1)),old=totals(pk),notes=[];
+ if(old.expense&&cur.expense){const v=Math.round((cur.expense-old.expense)/old.expense*100);notes.push("Tus gastos "+(v>0?"aumentaron":v<0?"disminuyeron":"se mantuvieron")+" "+Math.abs(v)+"% respecto al mes anterior.");}
+ if(ex.length&&cur.expense)notes.push(ex[0][0]+" es tu categoría con mayor gasto: "+money(ex[0][1])+" ("+Math.round(ex[0][1]/cur.expense*100)+"%).");
+ if(cur.income||cur.expense)notes.push("Tu balance del mes es "+money(cur.income-cur.expense)+".");
+ const high=rows.filter(x=>x.expense>0).sort((x,y)=>y.expense-x.expense)[0];if(high)notes.push("El mayor gasto de los seis meses fue en "+monthName(high.key)+": "+money(high.expense)+".");
+ $("analyticsInsights").innerHTML=notes.length?notes.map(x=>'<div class="insight-line">'+escapeHTML(x)+'</div>').join(""):'<div class="empty-state">Necesitamos más movimientos para generar conclusiones fiables.</div>';
+}
+
 function renderDonut(key,total){
   const sums={};transactionsFor(key,"expense").forEach(x=>sums[x.category]=(sums[x.category]||0)+x.amount);
   const entries=Object.entries(sums).sort((a,b)=>b[1]-a[1]);let cursor=0;
@@ -98,7 +135,7 @@ function openTransaction(type,tx=null){
   $("categoryLabel").textContent=type==="expense"?"¿En qué gastaste?":"Categoría";
   renderCategoryPicker(type,initialCategory);
   $("amount").value=tx?.amount||"";$("description").value=tx?.description||"";
-  $("date").value=tx?.date||new Date().toISOString().slice(0,10);
+  $("date").value=tx?.date||localDateInput();
   $("saveTransaction").textContent=tx?"Guardar cambios":"Guardar movimiento";
   $("transactionDialog").showModal();setTimeout(()=>$("amount").focus(),100);
 }
@@ -174,11 +211,6 @@ $("exportCsv").onclick=()=>{
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
 };
-document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===b));
-  if(b.dataset.tab==="history")openHistory();
-  if(b.dataset.tab==="budget")openBudget();
-  if(b.dataset.tab==="home")window.scrollTo({top:0,behavior:"smooth"});
-});
+document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===b));const stats=b.dataset.tab==="analytics";$("analyticsScreen").hidden=!stats;Array.from(document.querySelector("main").children).forEach(el=>{if(el.id!=="analyticsScreen")el.hidden=stats});if(b.dataset.tab==="history")openHistory();if(b.dataset.tab==="budget")openBudget();if(b.dataset.tab==="home"){window.scrollTo({top:0,behavior:"smooth"});render()}if(stats){renderAnalytics();window.scrollTo({top:0,behavior:"smooth"})}});
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
