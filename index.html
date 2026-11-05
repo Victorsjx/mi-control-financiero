@@ -66,7 +66,7 @@
       <div class="modal-head"><div><div class="eyebrow" id="formEyebrow">NUEVO MOVIMIENTO</div><h2 id="formTitle">Añadir gasto</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
       <input type="hidden" id="transactionType" value="expense"><input type="hidden" id="transactionId">
       <label for="amount">Monto (CLP)</label><input id="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 15000" required>
-      <label for="category">Categoría</label><select id="category"></select>
+      <label id="categoryLabel" for="category">Categoría</label><div id="expenseCategoryPicker" class="category-picker" role="group" aria-label="Seleccionar categoría de gasto"></div><select id="category"></select>
       <label for="description">Descripción (opcional)</label><input id="description" type="text" maxlength="70" placeholder="Ej. Supermercado, locomoción...">
       <label for="date">Fecha</label><input id="date" type="date" required>
       <button class="submit-btn" type="submit" id="saveTransaction">Guardar movimiento</button>
