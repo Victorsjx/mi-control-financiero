@@ -211,7 +211,7 @@ $("exportCsv").onclick=()=>{
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
 };
-function switchTab(tab){document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));const visibleTab=(tab==="budget"||tab==="history")?"home":tab;document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==visibleTab});window.scrollTo({top:0,behavior:"smooth"});if(tab==="add"){openTransaction("expense");return}if(tab==="budget"){openBudget();return}if(tab==="history"){openHistory();return}if(tab==="home")render();if(tab==="analytics")renderAnalytics();if(tab==="goals")renderGoals()}document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function switchTab(tab){document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));const visibleTab=(tab==="budget"||tab==="history"||tab==="add")?"home":tab;document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==visibleTab});window.scrollTo({top:0,behavior:"smooth"});if(tab==="add"){openTransaction("expense");return}if(tab==="budget"){openBudget();return}if(tab==="history"){openHistory();return}if(tab==="home")render();if(tab==="analytics")renderAnalytics();if(tab==="goals")renderGoals()}document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
 
