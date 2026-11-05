@@ -27,6 +27,19 @@ const ICON_PATHS={
 };
 function iconSVG(name){const paths=ICON_PATHS[name]||ICON_PATHS.shapes;return '<svg class="ui-icon" data-icon="'+name+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+paths+'</svg>'}
 
+
+function animateNumber(el,value,duration=280){
+ if(!el)return;
+ const raw=String(value),target=Number(raw.replace(/[^0-9.-]/g,""));
+ if(!Number.isFinite(target)||window.matchMedia("(prefers-reduced-motion: reduce)").matches){el.textContent=raw;return}
+ const startValue=Number(el.dataset.numericValue||0),start=performance.now();
+ el.dataset.numericValue=String(target);
+ const format=n=>{if(raw.includes("%"))return Math.round(n)+"%";if(raw.startsWith("$")||raw.includes("$"))return money(Math.round(n));return Math.round(n).toLocaleString("es-CL")};
+ function frame(now){const p=Math.min(1,(now-start)/duration),e=1-Math.pow(1-p,3);el.textContent=format(startValue+(target-startValue)*e);if(p<1)requestAnimationFrame(frame);else el.textContent=raw}
+ requestAnimationFrame(frame);
+}
+function setAnimatedNumber(id,value){animateNumber($(id),value)}
+
 const STORAGE_KEY = "mi-control-financiero-v1";
 const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
 const expenseCategoryOptions = [{name:"Transporte",icon:"bus-front"},{name:"Comida",icon:"utensils"},{name:"Salidas",icon:"ticket"},{name:"Otros",icon:"shapes"}];
@@ -76,8 +89,8 @@ function render(){
   const isCurrent=key===monthKey(new Date()),now=new Date(),daysInMonth=new Date(monthDate(key).getFullYear(),monthDate(key).getMonth()+1,0).getDate();
   const elapsed=isCurrent?Math.max(1,now.getDate()):daysInMonth;
   $("monthLabel").textContent=monthName(key);
-  $("balance").textContent=money(net);$("balance").classList.toggle("negative-balance",net<0);
-  $("incomeTotal").textContent=money(t.income);$("expenseTotal").textContent=money(t.expense);
+  setAnimatedNumber("balance",money(net));$("balance").classList.toggle("negative-balance",net<0);
+  setAnimatedNumber("incomeTotal",money(t.income));setAnimatedNumber("expenseTotal",money(t.expense));
   const ratio=budget>0?t.expense/budget*100:0;
   $("spendProgress").style.width=Math.min(ratio,100)+"%";
   $("spendProgress").classList.toggle("over-budget",budget>0&&t.expense>budget);
@@ -85,15 +98,15 @@ function render(){
   $("budgetCaption").textContent=budget?money(budget)+" sueldo inicial":"Ingresa tu sueldo inicial";
   $("budgetCaption").classList.toggle("warning-text",budget>0&&t.expense>budget);
   const projectedExpense=isCurrent?t.expense/elapsed*daysInMonth:t.expense;
-  $("projection").textContent=money(projectedExpense);
+  setAnimatedNumber("projection",money(projectedExpense));
   $("projectionHint").textContent=isCurrent?("Estimación según "+elapsed+" día"+(elapsed===1?"":"s")+" registrado"+(elapsed===1?"":"s")):"Gasto total registrado del mes";
-  $("saving").textContent=money(net);$("savingHint").textContent=net>=0?"Ingresos menos gastos registrados":"Tus gastos superan tus ingresos";
-  $("movementCount").textContent=transactionsFor(key).length;
-  $("dailyAverage").textContent=money(t.expense/elapsed);
-  $("savingRate").textContent=t.income?Math.round(net/t.income*100)+"%":"—";
+  setAnimatedNumber("saving",money(net));$("savingHint").textContent=net>=0?"Ingresos menos gastos registrados":"Tus gastos superan tus ingresos";
+  setAnimatedNumber("movementCount",String(transactionsFor(key).length));
+  setAnimatedNumber("dailyAverage",money(t.expense/elapsed));
+  setAnimatedNumber("savingRate",t.income?Math.round(net/t.income*100)+"%":"—");
   $("savingRateHint").textContent=t.income?"Ahorro sobre ingresos":"Registra ingresos para calcularlo";
   const daysLeft=isCurrent?Math.max(1,daysInMonth-now.getDate()+1):1;
-  $("dailyAvailable").textContent=budget?money(Math.max(0,budget-t.expense)/daysLeft):"—";
+  setAnimatedNumber("dailyAvailable",budget?money(Math.max(0,budget-t.expense)/daysLeft):"—");
   $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" del dinero inicial restante":"Ingresa tu sueldo inicial";
   renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();renderGoals();
 }
@@ -113,7 +126,7 @@ function renderSmartPanel(key,t,budget,net){
 function renderAnalytics(){
  const d=monthDate(selectedMonth);const keys=Array.from({length:6},(_,i)=>monthKey(new Date(d.getFullYear(),d.getMonth()-5+i,1)));
  const rows=keys.map(k=>({key:k,label:monthDate(k).toLocaleDateString("es-CL",{month:"short"}),...totals(k)}));
- const inc=rows.reduce((s,x)=>s+x.income,0),exp=rows.reduce((s,x)=>s+x.expense,0);$("sixIncome").textContent=money(inc);$("sixExpense").textContent=money(exp);$("sixBalance").textContent=money(inc-exp);$("sixSavingRate").textContent=inc?Math.round((inc-exp)/inc*100)+"%":"—";
+ const inc=rows.reduce((s,x)=>s+x.income,0),exp=rows.reduce((s,x)=>s+x.expense,0);setAnimatedNumber("sixIncome",money(inc));setAnimatedNumber("sixExpense",money(exp));setAnimatedNumber("sixBalance",money(inc-exp));$("sixSavingRate").textContent=inc?Math.round((inc-exp)/inc*100)+"%":"—";
  const max=Math.max(1,...rows.flatMap(x=>[x.income,x.expense]));
  $("trendChart").innerHTML=rows.some(x=>x.income||x.expense)?'<div class="bar-chart">'+rows.map(x=>'<div class="bar-month"><span>'+x.label+'</span><div class="bar-pair"><i class="bar-income" style="height:'+Math.max(2,x.income/max*100)+'%"></i><i class="bar-expense" style="height:'+Math.max(2,x.expense/max*100)+'%"></i></div><small>'+money(x.income)+' / '+money(x.expense)+'</small></div>').join("")+'</div><div class="chart-key"><span>Ingresos</span><span>Gastos</span></div>':'<div class="empty-state">Registra movimientos para ver tus últimos seis meses.</div>';
  const maxNet=Math.max(1,...rows.map(x=>Math.abs(x.income-x.expense)));$("balanceChart").innerHTML=rows.map(x=>'<div class="ranking-row"><div class="ranking-label"><span>'+monthName(x.key)+'</span><strong>'+money(x.income-x.expense)+'</strong></div><div class="category-budget-track"><span style="width:'+Math.abs(x.income-x.expense)/maxNet*100+'%"></span></div></div>').join("");
@@ -241,7 +254,11 @@ $("exportCsv").onclick=()=>{
 };
 function switchTab(tab){
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
- document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==tab});
+ document.querySelectorAll("[data-view]").forEach(el=>{
+  const active=el.dataset.view===tab;
+  if(active){el.hidden=false;el.classList.remove("screen-enter");void el.offsetWidth;el.classList.add("screen-enter")}
+  else{el.hidden=true;el.classList.remove("screen-enter")}
+ });
  window.scrollTo({top:0,behavior:"smooth"});
  if(tab==="add"){openTransaction("expense");return}
  if(tab==="home")render();
@@ -254,3 +271,8 @@ $("showAll").onclick=()=>switchTab("history");
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
 
+
+document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEach(button=>{
+ button.addEventListener("pointerdown",()=>button.classList.add("is-pressed"));
+ ["pointerup","pointercancel","pointerleave"].forEach(event=>button.addEventListener(event,()=>button.classList.remove("is-pressed")));
+});
