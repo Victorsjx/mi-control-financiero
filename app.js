@@ -142,7 +142,7 @@ function openBudget(){
   const saved=state.categoryBudgets[selectedMonth]||{};
   $("categoryBudgetFields").innerHTML=expenseCategories.map(category=>{
     const used=transactionsFor(selectedMonth,"expense").filter(x=>normalizeExpenseCategory(x.category)===category).reduce((sum,x)=>sum+x.amount,0);
-    return `<label class="category-budget-row"><span><strong>${category}</strong><small>Gastado: ${money(used)}</small></span><input type="number" min="0" step="1000" inputmode="numeric" data-budget-category="${category}" value="${saved[category]??""}" placeholder="Sin límite" aria-label="Presupuesto para ${category}"></label>`;
+    const cap=Number(saved[category]||0),percent=cap?Math.min(used/cap*100,100):0;\n    return `<div class="category-budget-card"><label class="category-budget-row"><span><strong>${category}</strong><small>Gastado: ${money(used)}${cap?` · ${used>cap?"Excedido por "+money(used-cap):"Disponible "+money(cap-used)}`:""}</small></span><input type="number" min="0" step="1000" inputmode="numeric" data-budget-category="${category}" value="${saved[category]??""}" placeholder="Sin límite" aria-label="Presupuesto para ${category}"></label><div class="category-budget-track"><span class="${cap&&used>cap?"over":""}" style="width:${percent}%"></span></div></div>`;
   }).join("");
   $("budgetDialog").showModal();
 }
@@ -163,7 +163,7 @@ $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").oncl
 $("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
 $("importData").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.transactions)||!data.budgets||typeof data.budgets!=="object"||!data.transactions.every(validTransaction))throw Error("Formato no válido");if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
+  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.transactions)||!data.budgets||typeof data.budgets!=="object"||!data.transactions.every(validTransaction))throw Error("Formato no válido");if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets,categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{}};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
 };
 $("clearData").onclick=()=>{if(confirm("Esto eliminará todos tus movimientos y presupuestos de este teléfono. ¿Ya exportaste una copia?")){state=emptyState();saveState();render();$("settingsDialog").close();showToast("Datos eliminados")}};
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
