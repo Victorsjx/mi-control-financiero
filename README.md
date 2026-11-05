@@ -6,10 +6,11 @@ Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en
 - Panel mensual con balance, ingresos, gastos y avance del presupuesto.
 - Proyección de gastos al cierre del mes y promedio diario.
 - Distribución visual de gastos por categoría.
-- Historial con filtros por mes, tipo y búsqueda.
+- Historial con filtros por mes, tipo, categoría, fechas y búsqueda.
 - Edición y eliminación de movimientos.
 - Comparación con el mes anterior.
-- Presupuesto mensual por mes.
+- Presupuesto mensual y límites opcionales por categoría.
+- Progreso y aviso visual al superar límites de gasto.
 - Exportación de historial CSV.
 - Copia de seguridad y restauración JSON.
 - Diseño adaptable a teléfonos y caché para uso sin conexión.
