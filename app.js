@@ -10,12 +10,12 @@ let state = loadState();
 let selectedMonth = monthKey(new Date());
 let toastTimer;
 
-function emptyState(){return {transactions:[],budgets:{}}}
+function emptyState(){return {transactions:[],budgets:{},categoryBudgets:{}}}
 function loadState(){
   try{
     const data=JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(!data||!Array.isArray(data.transactions))return emptyState();
-    return {transactions:data.transactions.filter(validTransaction).map(normalizeTransaction),budgets:data.budgets&&typeof data.budgets==="object"?data.budgets:{}};
+    return {transactions:data.transactions.filter(validTransaction).map(normalizeTransaction),budgets:data.budgets&&typeof data.budgets==="object"?data.budgets:{},categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{}};
   }catch{return emptyState()}
 }
 function validTransaction(t){return t&&typeof t==="object"&&(t.type==="income"||t.type==="expense")&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(t.date)&&typeof t.category==="string"}
@@ -112,20 +112,53 @@ $("transactionForm").onsubmit=e=>{
 };
 $("monthSelect").onchange=e=>{selectedMonth=e.target.value;render()};
 $("showAll").onclick=()=>openHistory();
-function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").value="all";$("historySearch").value="";renderHistory();$("historyDialog").showModal()}
+function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").value="all";$("historyCategory").value="all";$("historyFrom").value="";$("historyTo").value="";$("historySearch").value="";populateHistoryCategories();renderHistory();$("historyDialog").showModal()}
+function filteredHistory(){
+  const key=$("historyMonth").value,type=$("historyType").value,category=$("historyCategory").value;
+  const from=$("historyFrom").value,to=$("historyTo").value,q=$("historySearch").value.trim().toLocaleLowerCase("es-CL");
+  return state.transactions.filter(x=>(key==="all"||x.date.slice(0,7)===key)&&(type==="all"||x.type===type)&&(category==="all"||x.category===category)&&(!from||x.date>=from)&&(!to||x.date<=to)&&(!q||`${x.description} ${x.category}`.toLocaleLowerCase("es-CL").includes(q))).sort((x,y)=>y.date.localeCompare(x.date));
+}
 function renderHistory(){
-  const key=$("historyMonth").value,type=$("historyType").value,q=$("historySearch").value.trim().toLocaleLowerCase("es-CL");
-  const a=state.transactions.filter(x=>(key==="all"||x.date.slice(0,7)===key)&&(type==="all"||x.type===type)&&(!q||`${x.description} ${x.category}`.toLocaleLowerCase("es-CL").includes(q))).sort((x,y)=>y.date.localeCompare(x.date));
+  populateHistoryCategories();
+  const a=filteredHistory();
   const inc=a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0),exp=a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0);
   $("historySummary").textContent=`${a.length} movimientos · Ingresos ${money(inc)} · Gastos ${money(exp)} · Balance ${money(inc-exp)}`;
   $("fullHistory").innerHTML=a.length?a.map(x=>`${txHTML(x,true)}<div class="history-actions"><button class="mini-action edit-tx" data-id="${escapeHTML(x.id)}">Editar</button><button class="mini-action delete-tx" data-id="${escapeHTML(x.id)}">Eliminar</button></div>`).join(""):'<div class="empty-state">No hay movimientos para este filtro.</div>';
   document.querySelectorAll(".edit-tx").forEach(b=>b.onclick=()=>{const tx=state.transactions.find(x=>x.id===b.dataset.id);if(tx){$("historyDialog").close();openTransaction(tx.type,tx)}});
   document.querySelectorAll(".delete-tx").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar este movimiento?")){state.transactions=state.transactions.filter(x=>x.id!==b.dataset.id);saveState();render();renderHistory();showToast("Movimiento eliminado")}});
 }
-$("historyMonth").onchange=renderHistory;$("historyType").onchange=renderHistory;$("historySearch").oninput=renderHistory;$("closeHistory").onclick=()=>$("historyDialog").close();
+function populateHistoryCategories(){
+  const current=$("historyCategory").value||"all";
+  const categories=[...new Set(state.transactions.map(x=>x.category))].sort((a,b)=>a.localeCompare(b,"es-CL"));
+  $("historyCategory").innerHTML='<option value="all">Todas las categorías</option>'+categories.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
+  $("historyCategory").value=categories.includes(current)?current:"all";
+}
+$("historyMonth").onchange=renderHistory;$("historyType").onchange=renderHistory;$("historyCategory").onchange=renderHistory;$("historyFrom").onchange=renderHistory;$("historyTo").onchange=renderHistory;$("historySearch").oninput=renderHistory;$("closeHistory").onclick=()=>$("historyDialog").close();
 $("closeBudget").onclick=()=>$("budgetDialog").close();
-function openBudget(){$("budgetAmount").value=state.budgets[selectedMonth]??"";const spent=totals(selectedMonth).expense;const limit=Number(state.budgets[selectedMonth]||0);$("budgetStatus").textContent=`Gasto registrado: ${money(spent)}${limit? ` · Disponible: ${money(limit-spent)}`:""}`;$("budgetDialog").showModal()}
-$("saveBudget").onclick=()=>{const raw=$("budgetAmount").value,n=Number(raw);if(raw!==""&&(!Number.isSafeInteger(n)||n<0)){showToast("Ingresa un presupuesto válido");return}if(raw==="")delete state.budgets[selectedMonth];else state.budgets[selectedMonth]=n;saveState();$("budgetDialog").close();render();showToast("Presupuesto actualizado")};
+function openBudget(){
+  $("budgetAmount").value=state.budgets[selectedMonth]??"";
+  const spent=totals(selectedMonth).expense,limit=Number(state.budgets[selectedMonth]||0);
+  $("budgetStatus").textContent=`Gasto registrado: ${money(spent)}${limit? ` · Disponible: ${money(limit-spent)}`:""}`;
+  const saved=state.categoryBudgets[selectedMonth]||{};
+  $("categoryBudgetFields").innerHTML=expenseCategories.map(category=>{
+    const used=transactionsFor(selectedMonth,"expense").filter(x=>normalizeExpenseCategory(x.category)===category).reduce((sum,x)=>sum+x.amount,0);
+    return `<label class="category-budget-row"><span><strong>${category}</strong><small>Gastado: ${money(used)}</small></span><input type="number" min="0" step="1000" inputmode="numeric" data-budget-category="${category}" value="${saved[category]??""}" placeholder="Sin límite" aria-label="Presupuesto para ${category}"></label>`;
+  }).join("");
+  $("budgetDialog").showModal();
+}
+$("saveBudget").onclick=()=>{
+  const raw=$("budgetAmount").value,n=Number(raw);
+  if(raw!==""&&(!Number.isSafeInteger(n)||n<0)){showToast("Ingresa un presupuesto válido");return}
+  const categoryLimits={};
+  for(const input of $("categoryBudgetFields").querySelectorAll("[data-budget-category]")){
+    const value=input.value.trim(),category=input.dataset.budgetCategory;
+    if(value!==""&&(!Number.isSafeInteger(Number(value))||Number(value)<0)){showToast("Revisa los límites por categoría");input.focus();return}
+    if(value!=="")categoryLimits[category]=Number(value);
+  }
+  if(raw==="")delete state.budgets[selectedMonth];else state.budgets[selectedMonth]=n;
+  if(Object.keys(categoryLimits).length)state.categoryBudgets[selectedMonth]=categoryLimits;else delete state.categoryBudgets[selectedMonth];
+  saveState();$("budgetDialog").close();render();showToast("Presupuestos actualizados");
+};
 $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").onclick=()=>$("settingsDialog").showModal();
 $("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
 $("importData").onchange=async e=>{
@@ -135,8 +168,7 @@ $("importData").onchange=async e=>{
 $("clearData").onclick=()=>{if(confirm("Esto eliminará todos tus movimientos y presupuestos de este teléfono. ¿Ya exportaste una copia?")){state=emptyState();saveState();render();$("settingsDialog").close();showToast("Datos eliminados")}};
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 $("exportCsv").onclick=()=>{
-  const key=$("historyMonth").value,type=$("historyType").value;
-  const rows=state.transactions.filter(x=>(key==="all"||x.date.slice(0,7)===key)&&(type==="all"||x.type===type)).sort((a,b)=>a.date.localeCompare(b.date));
+  const rows=filteredHistory().sort((a,b)=>a.date.localeCompare(b.date));
   const quote=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
