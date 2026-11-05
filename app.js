@@ -252,20 +252,41 @@ $("exportCsv").onclick=()=>{
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
 };
+let screenTransitionToken=0;
 function switchTab(tab){
+ const target=tab==="add"?"home":tab;
+ const views=[...document.querySelectorAll("[data-view]")];
+ const current=views.find(el=>!el.hidden);
+ const next=views.find(el=>el.dataset.view===target);
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
- document.querySelectorAll("[data-view]").forEach(el=>{
-  const active=el.dataset.view===tab;
-  if(active){el.hidden=false;el.classList.remove("screen-enter");void el.offsetWidth;el.classList.add("screen-enter")}
-  else{el.hidden=true;el.classList.remove("screen-enter")}
- });
- window.scrollTo({top:0,behavior:"smooth"});
+ const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const token=++screenTransitionToken;
+ if(!next){views.forEach(el=>{el.hidden=el!==current});}
+ else if(current===next){next.hidden=false;}
+ else if(reduced||!current){
+  views.forEach(el=>{el.hidden=el!==next;el.classList.remove("screen-enter","screen-exit")});
+ }else{
+  views.forEach(el=>{if(el!==current&&el!==next){el.hidden=true;el.classList.remove("screen-enter","screen-exit")}});
+  next.hidden=false;
+  next.classList.remove("screen-enter","screen-exit");
+  current.classList.remove("screen-enter","screen-exit");
+  current.classList.add("screen-exit");
+  requestAnimationFrame(()=>{if(token===screenTransitionToken)next.classList.add("screen-enter")});
+  window.setTimeout(()=>{
+   if(token!==screenTransitionToken)return;
+   current.hidden=true;
+   current.classList.remove("screen-exit");
+   next.classList.remove("screen-enter");
+  },520);
+ }
+ window.scrollTo({top:0,behavior:reduced?"auto":"smooth"});
  if(tab==="add"){openTransaction("expense");return}
  if(tab==="home")render();
  if(tab==="analytics")renderAnalytics();
  if(tab==="history")openHistory();
  if(tab==="budget")openBudget();
 }
+
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $("showAll").onclick=()=>switchTab("history");
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
