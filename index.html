@@ -10,14 +10,14 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link rel="stylesheet" href="styles.css?v=14">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <div class="brand"><div class="brand-mark">M</div><div><div class="eyebrow">CONTROL PERSONAL</div><h1>Mi Finanzas</h1></div></div>
-      <button class="icon-btn" id="settingsBtn" aria-label="Configuración"><span aria-hidden="true">•••</span></button>
+      <button class="icon-btn" id="settingsBtn" aria-label="Configuración"><svg class="ui-icon" data-icon="settings" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></button>
     </header>
     <main>
       <section data-view="home" class="hero-card">
@@ -30,16 +30,16 @@
         <div class="progress-caption"><span id="spentPercent">0% del sueldo inicial utilizado</span><span id="budgetCaption">Ingresa tu sueldo inicial</span></div>
       </section>
       <section data-view="home" class="quick-actions">
-        <button class="action-btn primary" id="addExpense"><span>−</span> Registrar gasto</button>
-        <button class="action-btn secondary" id="addIncome"><span>＋</span> Registrar ingreso</button>
+        <button class="action-btn primary" id="addExpense"><svg class="ui-icon" data-icon="circle-minus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg> Registrar gasto</button>
+        <button class="action-btn secondary" id="addIncome"><svg class="ui-icon" data-icon="circle-plus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg> Registrar ingreso</button>
       </section>
       <section data-view="home" class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
         <div class="metric-grid">
-          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Balance estimado al cierre</small></article>
-          <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Saldo neto del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
-          <article class="metric-card"><div class="metric-icon blue">▤</div><div class="muted-label">Movimientos</div><strong id="movementCount">0</strong><small>Registros del mes</small></article>
-          <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article><article class="metric-card"><div class="metric-icon teal">%</div><div class="muted-label">Tasa de ahorro</div><strong id="savingRate">0%</strong><small id="savingRateHint">Ahorro sobre ingresos</small></article><article class="metric-card"><div class="metric-icon blue">◷</div><div class="muted-label">Disponible diario</div><strong id="dailyAvailable">$0</strong><small id="dailyAvailableHint">Según tu presupuesto</small></article>
+          <article class="metric-card"><div class="metric-icon purple"><svg class="ui-icon" data-icon="chart-line" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Balance estimado al cierre</small></article>
+          <article class="metric-card"><div class="metric-icon teal"><svg class="ui-icon" data-icon="wallet" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Saldo neto del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
+          <article class="metric-card"><div class="metric-icon blue"><svg class="ui-icon" data-icon="arrow-left-right" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Movimientos</div><strong id="movementCount">0</strong><small>Registros del mes</small></article>
+          <article class="metric-card"><div class="metric-icon orange"><svg class="ui-icon" data-icon="calendar-days" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article><article class="metric-card"><div class="metric-icon teal"><svg class="ui-icon" data-icon="piggy-bank" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Tasa de ahorro</div><strong id="savingRate">0%</strong><small id="savingRateHint">Ahorro sobre ingresos</small></article><article class="metric-card"><div class="metric-icon blue"><svg class="ui-icon" data-icon="clock" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></div><div class="muted-label">Disponible diario</div><strong id="dailyAvailable">$0</strong><small id="dailyAvailableHint">Según tu presupuesto</small></article>
         </div>
       </section>
       <section data-view="home" class="section"><div class="section-heading"><div><div class="eyebrow">CONTROL INTELIGENTE</div><h2>Límites de gasto por categoría</h2></div></div><div id="smartInsights" class="insight-card"></div><div id="dashboardCategoryBudgets" class="dashboard-budgets"></div></section>
@@ -56,7 +56,7 @@
         <div class="comparison-card" id="comparison"><div class="empty-state">Aún no hay datos para comparar.</div></div>
       </section>
       <section id="historyScreen" class="screen-page section" data-view="history" hidden>
-    <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory" aria-label="Volver al inicio">←</button></div>
+    <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory" aria-label="Volver al inicio"><svg class="ui-icon" data-icon="arrow-left" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></button></div>
     <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select><select id="historyCategory" aria-label="Filtrar categoría"><option value="all">Todas las categorías</option></select></div>
     <div class="history-date-filters"><label>Desde<input id="historyFrom" type="date"></label><label>Hasta<input id="historyTo" type="date"></label></div>
     <input class="search-input" id="historySearch" type="search" placeholder="Buscar por descripción o categoría...">
@@ -65,7 +65,7 @@
     <button class="outline-btn" id="exportCsv">Exportar historial a CSV</button>
   </section>
       <section id="budgetScreen" class="screen-page section" data-view="budget" hidden>
-    <div class="modal-head"><div><div class="eyebrow">DINERO DISPONIBLE AL INICIO</div><h2>Sueldo inicial del mes</h2></div><button class="close-btn" id="closeBudget" aria-label="Volver al inicio">←</button></div>
+    <div class="modal-head"><div><div class="eyebrow">DINERO DISPONIBLE AL INICIO</div><h2>Sueldo inicial del mes</h2></div><button class="close-btn" id="closeBudget" aria-label="Volver al inicio"><svg class="ui-icon" data-icon="arrow-left" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></button></div>
     <p class="modal-copy">Ingresa manualmente el sueldo y dinero principal con el que comienzas este mes.</p>
     <label for="budgetAmount">Sueldo inicial / dinero disponible (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 305000">
     <div id="budgetStatus" class="budget-status"></div>
@@ -76,7 +76,7 @@
   </section>
     <section class="analytics-screen" data-view="analytics" id="analyticsScreen" hidden><div class="section-heading"><div><div class="eyebrow">TUS FINANZAS EN EL TIEMPO</div><h2>Análisis financiero</h2></div><span class="analytics-period">Últimos 6 meses</span></div><div class="metric-grid analytics-summary"><article class="metric-card"><div class="muted-label">Ingresos · 6 meses</div><strong id="sixIncome">$0</strong></article><article class="metric-card"><div class="muted-label">Gastos · 6 meses</div><strong id="sixExpense">$0</strong></article><article class="metric-card"><div class="muted-label">Balance · 6 meses</div><strong id="sixBalance">$0</strong></article><article class="metric-card"><div class="muted-label">Ahorro promedio</div><strong id="sixSavingRate">—</strong></article></div><section class="section"><h2>Ingresos y gastos</h2><div id="trendChart" class="analytics-card"></div></section><section class="section"><h2>Balance mensual</h2><div id="balanceChart" class="analytics-card"></div></section><section class="section"><h2>Distribución de gastos</h2><div id="expenseRanking" class="analytics-card"></div></section><section class="section"><h2>Fuentes de ingresos</h2><div id="incomeRanking" class="analytics-card"></div></section><section class="section"><h2>Conclusiones</h2><div id="analyticsInsights" class="insight-card"></div></section></section>
     </main>
-<nav class="bottom-nav" aria-label="Navegación principal"><button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button><button class="nav-item" data-tab="analytics"><span>▥</span>Análisis</button><button class="nav-item nav-add" data-tab="add" aria-label="Añadir movimiento"><span>＋</span>Añadir</button><button class="nav-item" data-tab="budget"><span>◷</span>Sueldo</button><button class="nav-item" data-tab="history"><span>▤</span>Historial</button></nav>
+<nav class="bottom-nav" aria-label="Navegación principal"><button class="nav-item active" data-tab="home"><svg class="ui-icon" data-icon="house" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg><span>Inicio</span></button><button class="nav-item" data-tab="analytics"><svg class="ui-icon" data-icon="chart-no-axes-combined" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg><span>Análisis</span></button><button class="nav-item nav-add" data-tab="add" aria-label="Añadir movimiento"><svg class="ui-icon" data-icon="plus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg><span>Añadir</span></button><button class="nav-item" data-tab="budget"><svg class="ui-icon" data-icon="wallet" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg><span>Sueldo</span></button><button class="nav-item" data-tab="history"><svg class="ui-icon" data-icon="receipt-text" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg><span>Historial</span></button></nav>
   </div>
   <dialog id="transactionDialog" class="modal">
     <form id="transactionForm">
@@ -92,7 +92,7 @@
 
 
   <dialog id="settingsDialog" class="modal">
-    <div class="modal-head"><div><div class="eyebrow">PREFERENCIAS</div><h2>Configuración</h2></div><button class="close-btn" id="closeSettings">×</button></div>
+    <div class="modal-head"><div><div class="eyebrow">PREFERENCIAS</div><h2>Configuración</h2></div><button class="close-btn" id="closeSettings" aria-label="Cerrar"><svg class="ui-icon" data-icon="x" viewBox="0 0 24 24" aria-hidden="true" focusable="false"></svg></button></div>
     <div class="settings-note"><strong>Guardado en este teléfono</strong><p>Por ahora tus datos permanecen en el almacenamiento local de este navegador. La sincronización entre teléfonos requiere configurar una base de datos segura en la nube.</p></div>
     <button class="submit-btn" id="exportData">Crear copia de seguridad (.json)</button>
     <label class="file-label">Restaurar copia de seguridad<input type="file" id="importData" accept="application/json"></label>
@@ -100,6 +100,6 @@
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>
