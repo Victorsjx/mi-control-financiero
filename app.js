@@ -189,7 +189,7 @@ $("transactionForm").onsubmit=e=>{
   if(!Number.isSafeInteger(amount)||amount<=0||!date){showToast("Revisa el monto y la fecha");return}
   const item={id:id||makeId(),type:$("transactionType").value,amount,category:$("category").value,description:$("description").value.trim(),date};
   if(id){const i=state.transactions.findIndex(x=>x.id===id);if(i>=0)state.transactions[i]=item;else state.transactions.push(item)}else state.transactions.push(item);
-  saveState();selectedMonth=date.slice(0,7);$("transactionDialog").close();render();showToast(id?"Movimiento actualizado":"Movimiento guardado");
+  saveState();selectedMonth=date.slice(0,7);$("transactionDialog").close();render();if(id)showToast("Movimiento actualizado");else{const current=totals(selectedMonth),limit=Number(state.budgets[selectedMonth]||0);if(item.type==="expense"&&limit>0&&current.expense>limit)announce("alerta");else if(item.type==="income")announce("ingreso");else if(current.income>current.expense&&current.income>0)announce("ahorro");else announce("gasto");}
 };
 
 const RECEIPT_WORKER_URL="https://mi-finanzas-receipts.vic-meneses.workers.dev/";
@@ -248,7 +248,7 @@ $("receiptReviewForm").onsubmit=e=>{
  e.preventDefault();const amount=Number($("receiptTotal").value),date=$("receiptDate").value,description=$("receiptMerchant").value.trim();
  if(!Number.isSafeInteger(amount)||amount<=0||!date||!description){showToast("Revisa el comercio, monto y fecha");return}
  state.transactions.push({id:makeId(),type:"expense",amount,category:$("receiptCategory").value,description:description.slice(0,70),date});
- saveState();selectedMonth=date.slice(0,7);closeReceiptDialog();render();showToast("Gasto de boleta guardado");
+ saveState();selectedMonth=date.slice(0,7);closeReceiptDialog();render();const current=totals(selectedMonth),limit=Number(state.budgets[selectedMonth]||0);if(limit>0&&current.expense>limit)announce("alerta");else announce("gasto");
 };
 $("rescanReceipt").onclick=()=>{
  $("receiptReviewForm").hidden=true;$("receiptUploadStage").hidden=false;$("receiptFile").value="";
@@ -304,7 +304,7 @@ $("saveBudget").onclick=()=>{
   }
   if(raw==="")delete state.budgets[selectedMonth];else state.budgets[selectedMonth]=n;
   if(Object.keys(categoryLimits).length)state.categoryBudgets[selectedMonth]=categoryLimits;else delete state.categoryBudgets[selectedMonth];
-  saveState();render();showToast("Sueldo y límites actualizados");switchTab("budget");
+  saveState();render();announce("logro");switchTab("budget");
 };
 $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").onclick=()=>$("settingsDialog").showModal();
 $("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
@@ -378,7 +378,58 @@ function switchTab(tab){
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 $("showAll").onclick=()=>switchTab("history");
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+const ASSISTANT_PREF_KEY="mi-control-financiero-assistant-v1";
+function assistantPrefs(){try{return {...{personality:"mezcla",humor:"medio"},...JSON.parse(localStorage.getItem(ASSISTANT_PREF_KEY)||"{}")}}catch{return {personality:"mezcla",humor:"medio"}}}
+function assistantMessage(kind){
+ const p=assistantPrefs(),sets={
+ bienvenida:{
+ mayordomo:["👑 ¡El lord ha regresado! Su fortuna lo espera.","¡Bienvenido, mi estimado jefe! Sus finanzas están listas.","¡Su majestad, el reino financiero está a sus órdenes!"],
+ sarcastico:["💀 Volvió el responsable de esos gastos misteriosos.","¡Mira quién volvió! La billetera pidió refuerzos.","Jefe, espero que hoy vengamos a portarnos bien."],
+ militar:["🎖️ ¡Comandante en posición! Revisemos esas cuentas.","¡Atención, jefe! Operación control financiero iniciada.","¡A formar filas, lucas! El comandante ha llegado."],
+ amigo:["😎 ¡Qué pasa, jefe! ¿Cómo vamos con esas lucas?","¡Wena, patrón! Vamos a ordenar la billetera.","¡Grande, crack! Qué bueno tenerte de vuelta."],
+ mezcla:["👑 ¡El lord ha regresado! Su fortuna lo espera.","💀 ¡Volvió el jefe! Que la billetera no tiemble.","🎖️ ¡Comandante! Las finanzas esperan órdenes.","😎 ¡Wena, patrón! Vamos con todo."]},
+ ingreso:{
+ mayordomo:["💰 ¡Ha llegado dinero al reino, majestad!","¡Las arcas reciben refuerzos, mi lord!"],
+ sarcastico:["¡Milagro! Entró dinero. No lo gastemos en 4 minutos.","Jefe, llegó plata. Intente que se quede un rato."],
+ militar:["🎖️ ¡Refuerzos recibidos! Ingreso registrado, comandante.","¡Recursos incorporados! Mantenga la disciplina."],
+ amigo:["💸 ¡Buena, jefe! Entraron unas lucas.","¡Esooo! Que ese ingreso rinda harto."],
+ mezcla:["💰 ¡Las arcas del reino crecen!","🎉 ¡Ingreso desbloqueado, patrón!","¡Bien ahí, jefe! La billetera sonríe."]},
+ gasto:{
+ mayordomo:["🧐 Gasto registrado, mi lord. Que haya valido la pena.","El tesoro disminuye, majestad. Administremos con sabiduría."],
+ sarcastico:["💀 Otra salida de lucas. ¿Era estrictamente necesario, jefe?","La billetera sintió ese golpe, patrón.","Anotado. Mi calculadora está empezando a preocuparse."],
+ militar:["🎖️ Gasto registrado. ¡Mantenga el control, comandante!","Recurso utilizado. Vigile el presupuesto, jefe."],
+ amigo:["Ya, jefe, gasto anotado. ¡Con moderación!","Listoco, patrón. Ojo con las lucas que quedan."],
+ mezcla:["💸 Gasto registrado. ¡Que haya valido la pena!","💀 La billetera acaba de suspirar.","🫡 Anotado, comandante. Seguimos."]},
+ ahorro:{
+ mayordomo:["👑 ¡Así crece la fortuna del reino, majestad!","La prudencia de hoy construye el patrimonio de mañana."],
+ sarcastico:["Mira tú, ¡alguien está cuidando la plata! Estoy orgulloso.","No todo se va en gustitos. Qué emocionante, jefe."],
+ militar:["🎖️ ¡Disciplina financiera sobresaliente, comandante!","Objetivo de ahorro en marcha. ¡No afloje!"],
+ amigo:["¡Eso, jefe! Cada peso cuenta.","¡Buena esa! Tu yo del futuro te lo agradecerá."],
+ mezcla:["📈 ¡Así se construye un imperio, jefe!","🐷 ¡La alcancía está feliz!","👑 ¡El patrimonio del patrón está creciendo!"]},
+ alerta:{
+ mayordomo:["⚠️ Majestad, ha superado el presupuesto. Conviene revisar el gasto.","Mi lord, las arcas están bajo presión."],
+ sarcastico:["🚨 Jefe, esa billetera está pidiendo auxilio.","Estamos gastando como millonarios y cobrando como becarios.","Patrón, ¿podemos frenar un poquito?"],
+ militar:["🚨 ¡Alerta roja! Presupuesto superado, comandante.","¡Atención! Recursos por encima del límite autorizado."],
+ amigo:["Ojo, jefe, ya te pasaste del presupuesto.","Patrón, cuidemos esas lucas antes de que se acaben."],
+ mezcla:["🚨 ¡Alerta roja! Las lucas están escapando.","💀 Su billetera y yo necesitamos hablar seriamente.","Jefe, estamos en zona de peligro financiero."]},
+ logro:{
+ mayordomo:["🏆 ¡Una meta cumplida, majestad! El reino celebra.","¡Excelente gestión, mi lord! Objetivo alcanzado."],
+ sarcastico:["¡Lo logró! Quién diría que sí podía, jefe. 😂","Una meta cumplida. Hoy no lo voy a retar."],
+ militar:["🎖️ ¡Objetivo cumplido, comandante!","¡Misión completada! Disciplina recompensada."],
+ amigo:["¡Grande, jefe! Meta cumplida.","¡Vamos todavía! Tremendo logro, patrón."],
+ mezcla:["🏆 ¡Misión cumplida, comandante!","🎮 ¡Nivel financiero aumentado!","👑 ¡Insignia desbloqueada: Guardián de las Lucas!"]}};
+ const group=sets[kind]||sets.bienvenida,arr=group[p.personality]||group.mezcla;
+ const count=p.humor==="suave"?Math.max(1,Math.ceil(arr.length/2)):arr.length;
+ return arr[Math.floor(Math.random()*count)];
+}
+function announce(kind){showToast(assistantMessage(kind))}
+function updateWelcome(){$("welcomeGreeting").textContent=assistantMessage("bienvenida")}
 render();
+updateWelcome();
+$("assistantPersonality").value=assistantPrefs().personality;
+$("assistantHumor").value=assistantPrefs().humor;
+function saveAssistantPrefs(){localStorage.setItem(ASSISTANT_PREF_KEY,JSON.stringify({personality:$("assistantPersonality").value,humor:$("assistantHumor").value}));updateWelcome();showToast("¡Personalidad actualizada, jefe!")}
+$("assistantPersonality").onchange=saveAssistantPrefs;$("assistantHumor").onchange=saveAssistantPrefs;
 
 
 
