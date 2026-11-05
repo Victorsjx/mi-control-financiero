@@ -383,41 +383,41 @@ function assistantPrefs(){try{return {...{personality:"mezcla",humor:"medio"},..
 function assistantMessage(kind){
  const p=assistantPrefs(),sets={
  bienvenida:{
- mayordomo:["👑 ¡El lord ha regresado! Su fortuna lo espera.","¡Bienvenido, mi estimado jefe! Sus finanzas están listas.","¡Su majestad, el reino financiero está a sus órdenes!"],
- sarcastico:["💀 Volvió el responsable de esos gastos misteriosos.","¡Mira quién volvió! La billetera pidió refuerzos.","Jefe, espero que hoy vengamos a portarnos bien."],
- militar:["🎖️ ¡Comandante en posición! Revisemos esas cuentas.","¡Atención, jefe! Operación control financiero iniciada.","¡A formar filas, lucas! El comandante ha llegado."],
- amigo:["😎 ¡Qué pasa, jefe! ¿Cómo vamos con esas lucas?","¡Wena, patrón! Vamos a ordenar la billetera.","¡Grande, crack! Qué bueno tenerte de vuelta."],
- mezcla:["👑 ¡El lord ha regresado! Su fortuna lo espera.","💀 ¡Volvió el jefe! Que la billetera no tiemble.","🎖️ ¡Comandante! Las finanzas esperan órdenes.","😎 ¡Wena, patrón! Vamos con todo."]},
+ mayordomo:["👑 ¡El lord ha regresado! Su fortuna lo espera.","¡Bienvenido, mi estimado jefe! Sus finanzas están listas.","¡Su majestad, el reino financiero está a sus órdenes!","Las puertas del tesoro están abiertas para usted, majestad.","Su presencia mejora hasta el balance, mi lord.","¡A sus órdenes! El reino de las lucas está listo.","Majestad, hoy podemos escribir otra página de prosperidad.","El mayordomo financiero informa: todo dispuesto, jefe."],
+ sarcastico:["💀 Volvió el responsable de esos gastos misteriosos.","¡Mira quién volvió! La billetera pidió refuerzos.","Jefe, espero que hoy vengamos a portarnos bien.","La calculadora preguntó si hoy habrá paz.","¡Bienvenido! Tu saldo y yo tenemos algunas preguntas.","Volvió la persona que cree que el delivery no cuenta como gasto.","La billetera estaba tranquila… hasta que llegaste.","Jefe, prometo no juzgar. Bueno, intentaré."],
+ militar:["🎖️ Comandante en posición. Revisemos esas cuentas.","¡Atención, jefe! Operación control financiero iniciada.","¡A formar filas, lucas! El comandante ha llegado.","Reporte de situación listo. Esperamos sus órdenes.","¡Equipo financiero, firmes! Hoy se cumple el presupuesto.","Comandante, comienza una nueva misión de ahorro.","Objetivo del día: disciplina, estrategia y cero gastos sorpresa.","¡Despliegue financiero autorizado!"],
+ amigo:["😎 ¡Qué pasa, jefe! ¿Cómo vamos con esas lucas?","¡Wena, patrón! Vamos a ordenar la billetera.","¡Grande, crack! Qué bueno tenerte de vuelta.","¡Hola, máquina! Que hoy rindan esas lucas.","¿Cómo anda ese bolsillo, jefe? Vamos paso a paso.","¡Qué bueno verte, socio! Revisemos cómo va todo.","¡Llegó el patrón! Que no falte el control ni el cafecito.","Wena wena, jefe. Tus finanzas te estaban esperando."],
+ mezcla:["👑 ¡El lord ha regresado! Su fortuna lo espera.","💀 ¡Volvió el jefe! Que la billetera no tiemble.","🎖️ ¡Comandante! Las finanzas esperan órdenes.","😎 ¡Wena, patrón! Vamos con todo.","¡Atención! Ha llegado el dueño de estas lucas.","La leyenda vuelve al reino financiero.","¡Jefe en línea! Activando modo ahorro.","¡Bienvenido de vuelta! Que hablen los números."]},
  ingreso:{
- mayordomo:["💰 ¡Ha llegado dinero al reino, majestad!","¡Las arcas reciben refuerzos, mi lord!"],
- sarcastico:["¡Milagro! Entró dinero. No lo gastemos en 4 minutos.","Jefe, llegó plata. Intente que se quede un rato."],
- militar:["🎖️ ¡Refuerzos recibidos! Ingreso registrado, comandante.","¡Recursos incorporados! Mantenga la disciplina."],
- amigo:["💸 ¡Buena, jefe! Entraron unas lucas.","¡Esooo! Que ese ingreso rinda harto."],
- mezcla:["💰 ¡Las arcas del reino crecen!","🎉 ¡Ingreso desbloqueado, patrón!","¡Bien ahí, jefe! La billetera sonríe."]},
+ mayordomo:["💰 ¡Ha llegado dinero al reino, majestad!","¡Las arcas reciben refuerzos, mi lord!","El tesoro aumenta. Excelente noticia, majestad.","Un nuevo ingreso fortalece el reino.","¡Prosperidad para sus arcas, mi estimado jefe!","El reino agradece esta nueva entrada de monedas."],
+ sarcastico:["¡Milagro! Entró dinero. No lo gastemos en 4 minutos.","Jefe, llegó plata. Intente que se quede un rato.","¡Un ingreso! La billetera vuelve a tener esperanzas.","No se emocione gastándolo todo, patrón.","Entró dinero. Fingiremos que no vimos la lista de deseos.","¡Buenas noticias! Hoy la cuenta recibió cariño."],
+ militar:["🎖️ ¡Refuerzos recibidos! Ingreso registrado, comandante.","¡Recursos incorporados! Mantenga la disciplina.","Nuevo suministro financiero confirmado.","¡Excelente! Más recursos para cumplir la misión.","Ingreso recibido. Administre con estrategia, comandante.","¡Las tropas financieras celebran este refuerzo!"],
+ amigo:["💸 ¡Buena, jefe! Entraron unas lucas.","¡Esooo! Que ese ingreso rinda harto.","¡Se agrandó la billetera, patrón!","Buena noticia, socio. A cuidar esa platita.","¡Vamos! Un ingreso más para tus planes.","¡Filete, jefe! Que esas lucas trabajen para ti."],
+ mezcla:["💰 ¡Las arcas del reino crecen!","🎉 ¡Ingreso desbloqueado, patrón!","¡Bien ahí, jefe! La billetera sonríe.","¡Refuerzos para el imperio!","La cuenta recibió buenas noticias.","¡Más lucas, más posibilidades! Administremos bien."]},
  gasto:{
- mayordomo:["🧐 Gasto registrado, mi lord. Que haya valido la pena.","El tesoro disminuye, majestad. Administremos con sabiduría."],
- sarcastico:["💀 Otra salida de lucas. ¿Era estrictamente necesario, jefe?","La billetera sintió ese golpe, patrón.","Anotado. Mi calculadora está empezando a preocuparse."],
- militar:["🎖️ Gasto registrado. ¡Mantenga el control, comandante!","Recurso utilizado. Vigile el presupuesto, jefe."],
- amigo:["Ya, jefe, gasto anotado. ¡Con moderación!","Listoco, patrón. Ojo con las lucas que quedan."],
- mezcla:["💸 Gasto registrado. ¡Que haya valido la pena!","💀 La billetera acaba de suspirar.","🫡 Anotado, comandante. Seguimos."]},
+ mayordomo:["🧐 Gasto registrado, mi lord. Que haya valido la pena.","El tesoro disminuye, majestad. Administremos con sabiduría.","Una salida de monedas ha sido anotada, majestad.","El reino toma nota de este gasto.","Mi lord, cada moneda merece una misión.","Gasto registrado. Que sea una inversión en bienestar."],
+ sarcastico:["💀 Otra salida de lucas. ¿Era estrictamente necesario, jefe?","La billetera sintió ese golpe, patrón.","Anotado. Mi calculadora está empezando a preocuparse.","Jefe, esa compra dejó huella en el presupuesto.","No juzgo el gasto. La planilla sí.","La plata salió más rápido que nosotros de la cama.","Un gustito más y la billetera pide vacaciones.","Gasto anotado. El autocontrol sigue en entrenamiento."],
+ militar:["🎖️ Gasto registrado. ¡Mantenga el control, comandante!","Recurso utilizado. Vigile el presupuesto, jefe.","Movimiento registrado. No pierda el objetivo de vista.","Comandante, controle el consumo de recursos.","Gasto autorizado en el registro. Seguimos en misión.","¡Atención! Cada recurso cuenta para la operación."],
+ amigo:["Ya, jefe, gasto anotado. ¡Con moderación!","Listoco, patrón. Ojo con las lucas que quedan.","Anotado, socio. Que no se nos arranque el presupuesto.","Todo bien, jefe. Pero no nos embalemos.","Un gasto menos por registrar, ¡bien ahí!","Dale, patrón. Revisemos cuánto queda después."],
+ mezcla:["💸 Gasto registrado. ¡Que haya valido la pena!","💀 La billetera acaba de suspirar.","🫡 Anotado, comandante. Seguimos.","Las lucas se fueron, pero al menos quedaron registradas.","Jefe, el presupuesto tiene memoria.","Gasto anotado. ¡Que el próximo sea más estratégico!"]},
  ahorro:{
- mayordomo:["👑 ¡Así crece la fortuna del reino, majestad!","La prudencia de hoy construye el patrimonio de mañana."],
- sarcastico:["Mira tú, ¡alguien está cuidando la plata! Estoy orgulloso.","No todo se va en gustitos. Qué emocionante, jefe."],
- militar:["🎖️ ¡Disciplina financiera sobresaliente, comandante!","Objetivo de ahorro en marcha. ¡No afloje!"],
- amigo:["¡Eso, jefe! Cada peso cuenta.","¡Buena esa! Tu yo del futuro te lo agradecerá."],
- mezcla:["📈 ¡Así se construye un imperio, jefe!","🐷 ¡La alcancía está feliz!","👑 ¡El patrimonio del patrón está creciendo!"]},
+ mayordomo:["👑 ¡Así crece la fortuna del reino, majestad!","La prudencia de hoy construye el patrimonio de mañana.","Cada moneda guardada fortalece el reino.","Majestad, su disciplina merece reconocimiento.","El tesoro crece gracias a su buen criterio.","¡Una decisión sabia para las arcas del reino!"],
+ sarcastico:["Mira tú, ¡alguien está cuidando la plata! Estoy orgulloso.","No todo se va en gustitos. Qué emocionante, jefe.","¡Un ahorro! Voy a guardar este momento histórico.","La billetera sonríe. Yo también, un poquito.","Jefe, hoy sí le ganamos al carrito de compras.","¡Mira esas lucas quedándose donde deben!"],
+ militar:["🎖️ ¡Disciplina financiera sobresaliente, comandante!","Objetivo de ahorro en marcha. ¡No afloje!","¡Reserva financiera asegurada! Mantenga la formación.","Cada peso ahorrado acerca la misión al éxito.","Comandante, su estrategia está dando resultados.","¡Excelente control de recursos!"],
+ amigo:["¡Eso, jefe! Cada peso cuenta.","¡Buena esa! Tu yo del futuro te lo agradecerá.","¡Así se hace, patrón! A guardar de a poquito.","Vamos sumando, socio. ¡Buen trabajo!","¡Qué orgullo, jefe! Esas lucas se están cuidando.","De a poco se llega lejos. ¡Vamos todavía!"],
+ mezcla:["📈 ¡Así se construye un imperio, jefe!","🐷 ¡La alcancía está feliz!","👑 ¡El patrimonio del patrón está creciendo!","¡Punto para el equipo ahorro!","¡La disciplina está pagando, comandante!","Hoy ganó el futuro yo del jefe."]},
  alerta:{
- mayordomo:["⚠️ Majestad, ha superado el presupuesto. Conviene revisar el gasto.","Mi lord, las arcas están bajo presión."],
- sarcastico:["🚨 Jefe, esa billetera está pidiendo auxilio.","Estamos gastando como millonarios y cobrando como becarios.","Patrón, ¿podemos frenar un poquito?"],
- militar:["🚨 ¡Alerta roja! Presupuesto superado, comandante.","¡Atención! Recursos por encima del límite autorizado."],
- amigo:["Ojo, jefe, ya te pasaste del presupuesto.","Patrón, cuidemos esas lucas antes de que se acaben."],
- mezcla:["🚨 ¡Alerta roja! Las lucas están escapando.","💀 Su billetera y yo necesitamos hablar seriamente.","Jefe, estamos en zona de peligro financiero."]},
+ mayordomo:["⚠️ Majestad, ha superado el presupuesto. Conviene revisar el gasto.","Mi lord, las arcas están bajo presión.","El tesoro requiere prudencia inmediata, majestad.","Sugiero pausar gastos no esenciales, mi lord.","Majestad, el presupuesto necesita atención.","Las arcas del reino están en zona delicada."],
+ sarcastico:["🚨 Jefe, esa billetera está pidiendo auxilio.","Estamos gastando como millonarios y cobrando como becarios.","Patrón, ¿podemos frenar un poquito?","La calculadora está sudando, jefe.","¿Presupuesto? Parece que lo dejamos en visto.","Jefe, las lucas están arrancando sin despedirse.","La billetera solicitó una reunión urgente.","Momento de cerrar la llave de los gustitos."],
+ militar:["🚨 ¡Alerta roja! Presupuesto superado, comandante.","¡Atención! Recursos por encima del límite autorizado.","Comandante, se requiere plan de contención.","¡Alerta de recursos! Reorganice la estrategia.","Prioridad máxima: recuperar el control del presupuesto.","¡Detengan gastos no esenciales!"],
+ amigo:["Ojo, jefe, ya te pasaste del presupuesto.","Patrón, cuidemos esas lucas antes de que se acaben.","Socio, toca apretar un poquito el cinturón.","Jefe, revisemos esos gastos antes de seguir.","No es reto, pero hay que ordenar la cosa.","Ojo ahí, crack. El presupuesto está pidiendo ayuda."],
+ mezcla:["🚨 ¡Alerta roja! Las lucas están escapando.","💀 Su billetera y yo necesitamos hablar seriamente.","Jefe, estamos en zona de peligro financiero.","¡Pausa táctica! Hay que cuidar el saldo.","Las arcas están temblando, mi lord.","¡Modo ahorro de emergencia activado!"]},
  logro:{
- mayordomo:["🏆 ¡Una meta cumplida, majestad! El reino celebra.","¡Excelente gestión, mi lord! Objetivo alcanzado."],
- sarcastico:["¡Lo logró! Quién diría que sí podía, jefe. 😂","Una meta cumplida. Hoy no lo voy a retar."],
- militar:["🎖️ ¡Objetivo cumplido, comandante!","¡Misión completada! Disciplina recompensada."],
- amigo:["¡Grande, jefe! Meta cumplida.","¡Vamos todavía! Tremendo logro, patrón."],
- mezcla:["🏆 ¡Misión cumplida, comandante!","🎮 ¡Nivel financiero aumentado!","👑 ¡Insignia desbloqueada: Guardián de las Lucas!"]}};
+ mayordomo:["🏆 ¡Una meta cumplida, majestad! El reino celebra.","¡Excelente gestión, mi lord! Objetivo alcanzado.","Su constancia honra al reino, majestad.","Una nueva victoria para sus finanzas.","¡El tesoro celebra este logro, mi lord!","La buena administración vuelve a dar frutos."],
+ sarcastico:["¡Lo logró! Quién diría que sí podía, jefe. 😂","Una meta cumplida. Hoy no lo voy a retar.","¡Mira qué responsable! Hasta me emocioné.","Jefe, hoy se ganó el derecho a presumir.","¡Logro desbloqueado! No se acostumbre a que lo felicite.","La disciplina apareció. ¡Y vino para quedarse!"],
+ militar:["🎖️ ¡Objetivo cumplido, comandante!","¡Misión completada! Disciplina recompensada.","¡Victoria financiera! Informe de éxito confirmado.","Comandante, objetivo alcanzado con honores.","¡Medalla al mérito presupuestario!","La estrategia funcionó. ¡A la siguiente misión!"],
+ amigo:["¡Grande, jefe! Meta cumplida.","¡Vamos todavía! Tremendo logro, patrón.","¡Seco, socio! Así se hace.","¡Qué buena, crack! Un paso más adelante.","¡Orgulloso de ti, jefe! Sigue así.","¡Eso merece celebración! Bien jugado, patrón."],
+ mezcla:["🏆 ¡Misión cumplida, comandante!","🎮 ¡Nivel financiero aumentado!","👑 ¡Insignia desbloqueada: Guardián de las Lucas!","¡Victoria para el imperio del jefe!","¡Logro desbloqueado! Las lucas bajo control.","¡Hoy se celebra la disciplina financiera!"]}};
  const group=sets[kind]||sets.bienvenida,arr=group[p.personality]||group.mezcla;
  const count=p.humor==="suave"?Math.max(1,Math.ceil(arr.length/2)):arr.length;
  return arr[Math.floor(Math.random()*count)];
