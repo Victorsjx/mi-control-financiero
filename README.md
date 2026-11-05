@@ -2,9 +2,11 @@
 
 Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en pesos chilenos.
 
-## Versión 2.0
+## Versión 2.1
 - Panel mensual con balance, ingresos, gastos y avance del presupuesto.
-- Proyección de gastos al cierre del mes y promedio diario.
+- Proyección del balance al cierre, tasa de ahorro y disponible diario estimado.
+- Panel inteligente con alertas y presupuestos por categoría.
+- Estadísticas de seis meses, distribución de gastos e ingresos y conclusiones automáticas.
 - Distribución visual de gastos por categoría.
 - Historial con filtros por mes, tipo, categoría, fechas y búsqueda.
 - Edición y eliminación de movimientos.
