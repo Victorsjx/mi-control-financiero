@@ -28,7 +28,7 @@ const ICON_PATHS={
 function iconSVG(name){const paths=ICON_PATHS[name]||ICON_PATHS.shapes;return '<svg class="ui-icon" data-icon="'+name+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+paths+'</svg>'}
 
 
-function animateNumber(el,value,duration=280){
+function animateNumber(el,value,duration=560){
  if(!el)return;
  const raw=String(value),target=Number(raw.replace(/[^0-9.-]/g,""));
  if(!Number.isFinite(target)||window.matchMedia("(prefers-reduced-motion: reduce)").matches){el.textContent=raw;return}
