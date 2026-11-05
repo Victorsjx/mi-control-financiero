@@ -96,3 +96,10 @@ dialog{background:#1b2a3e;color:#edf2fa;border-color:#35465e;box-shadow:0 25px 8
 .category-option-icon{display:grid;place-items:center}
 .category-option-icon .ui-icon{width:21px;height:21px;stroke-width:1.8}
 .close-btn{display:grid;place-items:center}
+
+/* v15 hotfix: SVG visibles y etiqueta del botón Añadir separada del círculo */
+.nav-item>.ui-icon{display:block;visibility:visible;opacity:1}
+.nav-item>span{display:block;width:auto;height:auto;padding:0;margin:0;background:transparent;color:inherit;border-radius:0;font-size:10px;line-height:1.15;font-weight:500;box-shadow:none;white-space:nowrap}
+.nav-add>.ui-icon{display:grid;place-items:center;width:48px;height:48px;padding:11px;background:#9585ff;color:#101827;border-radius:50%;font-size:initial;box-shadow:0 7px 20px #7865ec55}
+.nav-add>span{font-size:10px!important;color:inherit!important}
+.metric-icon .ui-icon,.tx-icon .ui-icon,.category-option-icon .ui-icon{display:block}
