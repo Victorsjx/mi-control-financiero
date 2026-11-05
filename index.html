@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -21,7 +21,7 @@
     </header>
     <main>
       <section class="hero-card">
-        <div class="hero-top"><div><div class="muted-label">BALANCE DISPONIBLE</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
+        <div class="hero-top"><div><div class="muted-label">BALANCE DEL MES</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
         <div class="hero-stats">
           <div><span class="stat-dot income-dot"></span><span class="muted-label">Ingresos</span><strong id="incomeTotal">$0</strong></div>
           <div><span class="stat-dot expense-dot"></span><span class="muted-label">Gastos</span><strong id="expenseTotal">$0</strong></div>
@@ -74,7 +74,8 @@
   </dialog>
   <dialog id="historyDialog" class="modal wide-modal">
     <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory">×</button></div>
-    <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select></div>
+    <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select><select id="historyCategory" aria-label="Filtrar categoría"><option value="all">Todas las categorías</option></select></div>
+    <div class="history-date-filters"><label>Desde<input id="historyFrom" type="date"></label><label>Hasta<input id="historyTo" type="date"></label></div>
     <input class="search-input" id="historySearch" type="search" placeholder="Buscar por descripción o categoría...">
     <div class="history-summary" id="historySummary"></div>
     <div id="fullHistory" class="transactions-card"></div>
@@ -85,6 +86,9 @@
     <p class="modal-copy">Define cuánto puedes gastar durante el mes seleccionado.</p>
     <label for="budgetAmount">Presupuesto mensual (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 300000">
     <div id="budgetStatus" class="budget-status"></div>
+    <div class="budget-category-heading"><strong>Límites por categoría</strong><span>Opcional</span></div>
+    <p class="modal-copy">Define límites individuales para controlar mejor cada tipo de gasto.</p>
+    <div id="categoryBudgetFields" class="category-budget-fields"></div>
     <button class="submit-btn" id="saveBudget">Guardar presupuesto</button>
   </dialog>
   <dialog id="settingsDialog" class="modal">
@@ -96,6 +100,6 @@
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=7"></script>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
