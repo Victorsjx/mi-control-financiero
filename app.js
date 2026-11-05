@@ -232,9 +232,9 @@ $("scanReceipt").onclick=async()=>{
   if(!response.ok)throw new Error(data.error||"No se pudo analizar la boleta.");
   if(typeof data.total!=="number"||!Number.isFinite(data.total)||data.total<=0)throw new Error("No se detectó un monto válido. Intenta con una foto más nítida.");
   $("receiptMerchant").value=data.merchant||"Compra";$("receiptTotal").value=Math.round(data.total);
-  $("receiptDate").value=/^\\d{4}-\\d{2}-\\d{2}$/.test(data.date||"")?data.date:localDateInput();$("receiptCategory").value="Otros";
+  const detectedDate=/^\d{4}-\d{2}-\d{2}$/.test(data.date||"")?data.date:"";$("receiptDate").value=detectedDate;$("receiptCategory").value="Otros";
   const confidence=typeof data.confidence==="number"?Math.round(data.confidence*100):null;
-  $("receiptConfidence").textContent=(data.validatedTotal?"Total validado por Tabscanner.":confidence!==null?"Confianza de lectura del total: "+confidence+"%. Revisa el monto.":"Revisa cuidadosamente el monto detectado.")+(data.duplicate?" La imagen ya se había procesado anteriormente.":"");
+  $("receiptConfidence").textContent=(data.validatedTotal?"Total validado por Tabscanner.":confidence!==null?"Confianza de lectura del total: "+confidence+"%. Revisa el monto.":"Revisa cuidadosamente el monto detectado.")+(!detectedDate?" No se detectó una fecha válida. Ingresa manualmente la fecha de la boleta.":"")+(data.duplicate?" La imagen ya se había procesado anteriormente.":"");
   $("receiptUploadStage").hidden=true;$("receiptReviewForm").hidden=false;
  }catch(error){
   $("receiptStatus").textContent=error.message||"Ocurrió un error al leer la boleta.";receiptTurnstileToken="";
