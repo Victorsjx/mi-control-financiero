@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=19">
+  <link rel="stylesheet" href="styles.css?v=20">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -32,6 +32,7 @@
       <section data-view="home" class="quick-actions">
         <button class="action-btn primary" id="addExpense"><svg class="ui-icon" data-icon="circle-minus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg> Registrar gasto</button>
         <button class="action-btn secondary" id="addIncome"><svg class="ui-icon" data-icon="circle-plus" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg> Registrar ingreso</button>
+        <button class="action-btn receipt-action" id="openReceipt">▤ Leer boleta</button>
       </section>
       <section data-view="home" class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
@@ -99,7 +100,29 @@
     <button class="danger-btn" id="clearData">Eliminar todos mis movimientos</button>
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=19"></script>
+<dialog id="receiptDialog" class="modal wide-modal">
+    <div class="modal-head"><div><div class="eyebrow">REGISTRO INTELIGENTE</div><h2>Leer boleta</h2></div><button type="button" class="close-btn" id="closeReceipt" aria-label="Cerrar">×</button></div>
+    <p class="modal-copy">La foto se enviará a Tabscanner para extraer los datos. No se guardará en tu historial. Tabscanner conserva las imágenes y resultados hasta 90 días.</p>
+    <div id="receiptUploadStage">
+      <label for="receiptFile">Fotografía de la boleta (JPG o PNG)</label><input id="receiptFile" type="file" accept="image/jpeg,image/png" capture="environment">
+      <div id="receiptPreview" class="receipt-preview" hidden></div>
+      <div id="receiptTurnstile" class="turnstile-slot"></div>
+      <p class="tiny-note" id="receiptStatus" aria-live="polite">Selecciona una foto y completa la verificación de seguridad.</p>
+      <button type="button" class="submit-btn" id="scanReceipt" disabled>Analizar boleta</button>
+    </div>
+    <form id="receiptReviewForm" hidden>
+      <div class="receipt-review-note">Revisa los datos detectados. No se guardará ningún movimiento hasta que confirmes.</div>
+      <label for="receiptMerchant">Comercio / descripción</label><input id="receiptMerchant" type="text" maxlength="70" required>
+      <label for="receiptTotal">Monto total (CLP)</label><input id="receiptTotal" type="number" min="1" step="1" inputmode="numeric" required>
+      <label for="receiptDate">Fecha</label><input id="receiptDate" type="date" required>
+      <label for="receiptCategory">Categoría</label><select id="receiptCategory"><option>Transporte</option><option>Comida</option><option>Salidas</option><option selected>Otros</option></select>
+      <div id="receiptConfidence" class="tiny-note"></div>
+      <button type="submit" class="submit-btn" id="confirmReceipt">Confirmar y guardar gasto</button>
+      <button type="button" class="outline-btn" id="rescanReceipt">Leer otra boleta</button>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <script src="app.js?v=20"></script>
 </body>
 </html>
