@@ -2,6 +2,13 @@
 
 Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en pesos chilenos.
 
+## Versión 2.4
+- Índice mensual en memoria para reducir recorridos repetidos en consultas por mes.
+- Historial paginado en bloques de 100 registros para limitar el DOM.
+- Validación estricta de copias JSON: tamaño, cantidad, movimientos, montos, metas e identificadores duplicados.
+- Controles opcionales de tasa de solicitudes y timeouts en el Worker OCR.
+- Pruebas smoke automatizadas en `tests/smoke.test.mjs`.
+
 ## Versión 2.3
 - Pulido visual de tipografía, espaciado, tarjetas, formularios y navegación adaptable.
 - Mejoras de accesibilidad: estados de foco visibles y controles deshabilitados más claros.
