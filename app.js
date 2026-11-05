@@ -445,16 +445,6 @@ render();
 $("assistantPersonality").value=assistantPrefs().personality;
 $("assistantHumor").value=assistantPrefs().humor;
 updateWelcome();
-function saveAssistantPrefs(){
- const prefs={personality:$("assistantPersonality").value,humor:$("assistantHumor").value};
- localStorage.setItem(ASSISTANT_PREF_KEY,JSON.stringify(prefs));
- updateWelcome();
- showToast("¡Listo, jefe! Tu asistente ahora es "+$("assistantPersonality").selectedOptions[0].text+" · Humor: "+$("assistantHumor").selectedOptions[0].text);
-}
-["input","change"].forEach(event=>{
- $("assistantPersonality").addEventListener(event,saveAssistantPrefs);
- $("assistantHumor").addEventListener(event,saveAssistantPrefs);
-});
 
 
 
