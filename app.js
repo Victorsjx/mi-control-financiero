@@ -188,6 +188,71 @@ $("transactionForm").onsubmit=e=>{
   if(id){const i=state.transactions.findIndex(x=>x.id===id);if(i>=0)state.transactions[i]=item;else state.transactions.push(item)}else state.transactions.push(item);
   saveState();selectedMonth=date.slice(0,7);$("transactionDialog").close();render();showToast(id?"Movimiento actualizado":"Movimiento guardado");
 };
+
+const RECEIPT_WORKER_URL="https://mi-finanzas-receipts.vic-meneses.workers.dev/";
+const TURNSTILE_SITE_KEY="0x4AAAAAAF1DRzfcipL_wV4R";
+let receiptWidgetId=null,receiptTurnstileToken="",receiptImageUrl="";
+function updateReceiptReady(){const file=$("receiptFile").files?.[0];$("scanReceipt").disabled=!(file&&receiptTurnstileToken&&!$("receiptUploadStage").hidden)}
+function renderReceiptWidget(){
+ if(!window.turnstile){$("receiptStatus").textContent="No se pudo cargar la verificación. Comprueba tu conexión.";return}
+ if(receiptWidgetId!==null){try{window.turnstile.remove(receiptWidgetId)}catch{}receiptWidgetId=null}
+ receiptTurnstileToken="";$("scanReceipt").disabled=true;
+ receiptWidgetId=window.turnstile.render("#receiptTurnstile",{sitekey:TURNSTILE_SITE_KEY,action:"receipt_scan",theme:"dark",callback:token=>{receiptTurnstileToken=token;updateReceiptReady()},"expired-callback":()=>{receiptTurnstileToken="";updateReceiptReady()},"error-callback":()=>{receiptTurnstileToken="";$("receiptStatus").textContent="No se pudo verificar. Inténtalo nuevamente.";updateReceiptReady()}});
+}
+function openReceiptDialog(){
+ $("receiptUploadStage").hidden=false;$("receiptReviewForm").hidden=true;$("receiptFile").value="";
+ $("receiptStatus").textContent="Selecciona una foto y completa la verificación de seguridad.";
+ $("receiptPreview").hidden=true;$("receiptPreview").innerHTML="";
+ if(receiptImageUrl){URL.revokeObjectURL(receiptImageUrl);receiptImageUrl=""}
+ $("receiptDialog").showModal();
+ if(window.turnstile)renderReceiptWidget();else window.addEventListener("load",renderReceiptWidget,{once:true});
+}
+function closeReceiptDialog(){
+ $("receiptDialog").close();if(receiptImageUrl){URL.revokeObjectURL(receiptImageUrl);receiptImageUrl=""}
+ if(receiptWidgetId!==null&&window.turnstile){try{window.turnstile.remove(receiptWidgetId)}catch{}receiptWidgetId=null}
+ receiptTurnstileToken="";
+}
+$("openReceipt").onclick=openReceiptDialog;$("closeReceipt").onclick=closeReceiptDialog;
+$("receiptDialog").addEventListener("click",e=>{if(e.target===$("receiptDialog"))closeReceiptDialog()});
+$("receiptFile").addEventListener("change",()=>{
+ const file=$("receiptFile").files?.[0];$("receiptPreview").hidden=true;
+ if(receiptImageUrl){URL.revokeObjectURL(receiptImageUrl);receiptImageUrl=""}
+ if(!file){updateReceiptReady();return}
+ if(!["image/jpeg","image/png"].includes(file.type)||file.size>8*1024*1024){$("receiptFile").value="";$("receiptStatus").textContent="Usa una imagen JPG o PNG de máximo 8 MB.";updateReceiptReady();return}
+ receiptImageUrl=URL.createObjectURL(file);
+ $("receiptPreview").innerHTML='<img alt="Vista previa de la boleta" src="'+receiptImageUrl+'"><span>'+escapeHTML(file.name)+'</span>';
+ $("receiptPreview").hidden=false;$("receiptStatus").textContent="Foto lista. Completa la verificación para analizarla.";updateReceiptReady();
+});
+$("scanReceipt").onclick=async()=>{
+ const file=$("receiptFile").files?.[0];if(!file||!receiptTurnstileToken){$("receiptStatus").textContent="Selecciona la boleta y completa la verificación.";return}
+ const button=$("scanReceipt");button.disabled=true;button.textContent="Analizando boleta…";$("receiptStatus").textContent="Enviando la imagen para lectura segura.";
+ try{
+  const form=new FormData();form.append("file",file,file.name);form.append("cf-turnstile-response",receiptTurnstileToken);
+  const response=await fetch(RECEIPT_WORKER_URL,{method:"POST",body:form});const data=await response.json();
+  if(!response.ok)throw new Error(data.error||"No se pudo analizar la boleta.");
+  if(typeof data.total!=="number"||!Number.isFinite(data.total)||data.total<=0)throw new Error("No se detectó un monto válido. Intenta con una foto más nítida.");
+  $("receiptMerchant").value=data.merchant||"Compra";$("receiptTotal").value=Math.round(data.total);
+  $("receiptDate").value=/^\\d{4}-\\d{2}-\\d{2}$/.test(data.date||"")?data.date:localDateInput();$("receiptCategory").value="Otros";
+  const confidence=typeof data.confidence==="number"?Math.round(data.confidence*100):null;
+  $("receiptConfidence").textContent=(data.validatedTotal?"Total validado por Tabscanner.":confidence!==null?"Confianza de lectura del total: "+confidence+"%. Revisa el monto.":"Revisa cuidadosamente el monto detectado.")+(data.duplicate?" La imagen ya se había procesado anteriormente.":"");
+  $("receiptUploadStage").hidden=true;$("receiptReviewForm").hidden=false;
+ }catch(error){
+  $("receiptStatus").textContent=error.message||"Ocurrió un error al leer la boleta.";receiptTurnstileToken="";
+  if(window.turnstile&&receiptWidgetId!==null){try{window.turnstile.reset(receiptWidgetId)}catch{}}
+ }finally{button.textContent="Analizar boleta";button.disabled=!(file&&receiptTurnstileToken)}
+};
+$("receiptReviewForm").onsubmit=e=>{
+ e.preventDefault();const amount=Number($("receiptTotal").value),date=$("receiptDate").value,description=$("receiptMerchant").value.trim();
+ if(!Number.isSafeInteger(amount)||amount<=0||!date||!description){showToast("Revisa el comercio, monto y fecha");return}
+ state.transactions.push({id:makeId(),type:"expense",amount,category:$("receiptCategory").value,description:description.slice(0,70),date});
+ saveState();selectedMonth=date.slice(0,7);closeReceiptDialog();render();showToast("Gasto de boleta guardado");
+};
+$("rescanReceipt").onclick=()=>{
+ $("receiptReviewForm").hidden=true;$("receiptUploadStage").hidden=false;$("receiptFile").value="";
+ $("receiptPreview").hidden=true;$("receiptStatus").textContent="Selecciona otra foto y completa la verificación.";
+ if(receiptImageUrl){URL.revokeObjectURL(receiptImageUrl);receiptImageUrl=""}renderReceiptWidget();
+};
+
 $("monthSelect").onchange=e=>{selectedMonth=e.target.value;render()};
 $("showAll").onclick=()=>openHistory();
 function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").value="all";$("historyCategory").value="all";$("historyFrom").value="";$("historyTo").value="";$("historySearch").value="";populateHistoryCategories();renderHistory()}
