@@ -24,11 +24,13 @@ export default {async fetch(request,env){
   if(!["image/jpeg","image/png"].includes(file.type))return json({error:"Formato no compatible. Usa JPG o PNG."},415);
   if(!await verifyTurnstile(String(token||""),request,env))return json({error:"La verificación de seguridad expiró o no fue válida. Inténtalo nuevamente."},403);
   const uploadForm=new FormData();uploadForm.append("file",file,file.name||"boleta.jpg");uploadForm.append("region","cl");uploadForm.append("documentType","auto");uploadForm.append("defaultDateParsing","d/m");
-  const uploadResponse=await fetch(`${API_URL}/api/2/process`,{method:"POST",headers:{"apikey":env.TABSCANNER_API_KEY},body:uploadForm}),upload=await uploadResponse.json();
+  const uploadResponse=await fetch(`${API_URL}/api/2/process`,{method:"POST",headers:{"apikey":env.TABSCANNER_API_KEY},body:uploadForm,signal:AbortSignal.timeout(20000)});if(!uploadResponse.ok)return json({error:"El servicio OCR no está disponible temporalmente."},502);const upload=await uploadResponse.json();
   if(![200,300].includes(upload.code)||!upload.token)return json({error:upload.message||"Tabscanner no pudo recibir la boleta",code:upload.code||null},422);
   const deadline=Date.now()+55000;let result=null;
-  while(Date.now()<deadline){await new Promise(resolve=>setTimeout(resolve,1000));const response=await fetch(`${API_URL}/api/result/${encodeURIComponent(upload.token)}`,{headers:{"apikey":env.TABSCANNER_API_KEY}}),body=await response.json();if(body.code===202&&body.result){result=body.result;break}if(body.code!==301)return json({error:body.message||"No se pudo leer la boleta",code:body.code||null},422)}
+  while(Date.now()<deadline){await new Promise(resolve=>setTimeout(resolve,1000));const response=await fetch(`${API_URL}/api/result/${encodeURIComponent(upload.token)}`,{headers:{"apikey":env.TABSCANNER_API_KEY},signal:AbortSignal.timeout(10000)});if(!response.ok)return json({error:"No se pudo consultar el resultado OCR."},502);const body=await response.json();if(body.code===202&&body.result){result=body.result;break}if(body.code!==301)return json({error:body.message||"No se pudo leer la boleta",code:body.code||null},422)}
   if(!result)return json({error:"La lectura está tardando demasiado. Inténtalo nuevamente."},504);
-  return json({merchant:result.establishment||"",total:typeof result.total==="number"&&Number.isFinite(result.total)?result.total:null,date:result.dateISO?result.dateISO.slice(0,10):result.date?result.date.slice(0,10):"",currency:result.currency||"",confidence:typeof result.totalConfidence==="number"?result.totalConfidence:null,validatedTotal:result.validatedTotal===true,duplicate:upload.duplicate===true});
+  const isoDate=typeof result.dateISO==="string"&&/^\\d{4}-\\d{2}-\\d{2}$/.test(result.dateISO)?result.dateISO:"";
+  const total=typeof result.total==="number"&&Number.isSafeInteger(result.total)&&result.total>0?result.total:null;
+  return json({merchant:String(result.establishment||"").slice(0,70),total,date:isoDate,currency:String(result.currency||"").slice(0,8),confidence:typeof result.totalConfidence==="number"?Math.max(0,Math.min(1,result.totalConfidence)):null,validatedTotal:result.validatedTotal===true,duplicate:upload.duplicate===true});
  }catch{return json({error:"No se pudo procesar la imagen. Comprueba tu conexión e inténtalo nuevamente."},500)}
 }};
