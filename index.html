@@ -141,29 +141,29 @@
     const KEY = "mi-control-financiero-assistant-v1";
     const greetings = {
       mayordomo: {
-        suave: ["Bienvenido, mi estimado jefe. Sus finanzas están listas.", "Su majestad, todo está preparado."],
-        medio: ["👑 ¡Su majestad, el reino financiero está a sus órdenes!", "¡El lord ha regresado! Su fortuna lo espera."],
-        salvaje: ["¡Mi lord ha vuelto! Que tiemblen los gastos innecesarios.", "Majestad, hoy no se aceptan compras absurdas."]
+        suave: ["Bienvenido, mi estimado jefe. Sus finanzas están listas.","Su majestad, todo está preparado.","Las puertas del tesoro están abiertas para usted, majestad.","Su presencia mejora hasta el balance, mi lord.","El reino financiero está a sus órdenes.","Majestad, hoy podemos escribir otra página de prosperidad."],
+        medio: ["👑 ¡Su majestad, el reino financiero está a sus órdenes!","¡El lord ha regresado! Su fortuna lo espera.","El tesoro está listo para recibir sus decisiones, majestad.","¡A sus órdenes! El reino de las lucas está listo.","Su mayordomo financiero informa: todo dispuesto.","¡Bienvenido, mi lord! Que crezca su fortuna."],
+        salvaje: ["¡Mi lord ha vuelto! Que tiemblen los gastos innecesarios.","Majestad, hoy no se aceptan compras absurdas.","¡El reino exige disciplina y cero compras impulsivas!","Mi lord, hoy conquistaremos el presupuesto.","¡Que se preparen las monedas para una jornada histórica!"]
       },
       sarcastico: {
-        suave: ["¡Hola, jefe! Hoy cuidaremos esas lucas.", "¡Qué bueno verte! Vamos a portarnos bien."],
-        medio: ["💀 ¡Mira quién volvió! La billetera pidió refuerzos.", "Volvió el responsable de esos gastos misteriosos."],
-        salvaje: ["💀 ¡Volvió el responsable de esos gastos misteriosos!", "Jefe, su billetera presentó una queja formal."]
+        suave: ["¡Hola, jefe! Hoy cuidaremos esas lucas.","¡Qué bueno verte! Vamos a portarnos bien.","La calculadora está lista. Esperemos que no sufra.","¡Bienvenido! Hoy intentaremos no gastar por deporte.","Jefe, tu billetera y yo confiamos en ti."],
+        medio: ["💀 ¡Mira quién volvió! La billetera pidió refuerzos.","Volvió el responsable de esos gastos misteriosos.","La calculadora preguntó si hoy habrá paz.","¡Bienvenido! Tu saldo y yo tenemos algunas preguntas.","La billetera estaba tranquila… hasta que llegaste.","Jefe, prometo no juzgar. Bueno, intentaré."],
+        salvaje: ["💀 ¡Volvió el responsable de esos gastos misteriosos!","Jefe, su billetera presentó una queja formal.","¡Llegó el peligro de las ofertas! Es broma… ¿o no?","Hoy no se aceptan excusas tipo «estaba en oferta».","La cuenta bancaria pidió vacaciones de ti."]
       },
       militar: {
-        suave: ["Comandante, sus finanzas están listas.", "¡Atención, jefe! Comienza la misión financiera."],
-        medio: ["🎖️ ¡Comandante en posición! Revisemos esas cuentas.", "¡A formar filas, lucas! El comandante ha llegado."],
-        salvaje: ["🚨 ¡Comandante! Hoy se obedece al presupuesto.", "¡Operación austeridad! Ni una luca fuera de lugar."]
+        suave: ["Comandante, sus finanzas están listas.","¡Atención, jefe! Comienza la misión financiera.","Reporte de situación listo. Esperamos sus órdenes.","Comandante, nueva jornada de control iniciada.","¡Equipo financiero, a sus puestos!"],
+        medio: ["🎖️ ¡Comandante en posición! Revisemos esas cuentas.","¡A formar filas, lucas! El comandante ha llegado.","¡Atención! Operación control financiero iniciada.","Comandante, comienza una nueva misión de ahorro.","Objetivo del día: disciplina y estrategia."],
+        salvaje: ["🚨 ¡Comandante! Hoy se obedece al presupuesto.","¡Operación austeridad! Ni una luca fuera de lugar.","¡Alerta! Las compras impulsivas son el enemigo.","Comandante, hoy no se retrocede ante ningún gasto hormiga.","¡Misión del día: proteger cada peso!"]
       },
       amigo: {
-        suave: ["¡Qué bueno verte, jefe! ¿Cómo van esas lucas?", "¡Hola, patrón! Vamos con calma."],
-        medio: ["😎 ¡Wena, patrón! Vamos a ordenar la billetera.", "¡Grande, crack! Qué bueno tenerte de vuelta."],
-        salvaje: ["¡Wena, crack! A cuidar esas lucas, que no crecen en los árboles.", "¡Llegó el patrón! Hoy no se derrocha ni una moneda."]
+        suave: ["¡Qué bueno verte, jefe! ¿Cómo van esas lucas?","¡Hola, patrón! Vamos con calma.","¡Hola, máquina! Que hoy rindan esas lucas.","¿Cómo anda ese bolsillo, jefe?","¡Qué bueno verte, socio!"],
+        medio: ["😎 ¡Wena, patrón! Vamos a ordenar la billetera.","¡Grande, crack! Qué bueno tenerte de vuelta.","¡Llegó el patrón! Que no falte el control ni el cafecito.","Wena wena, jefe. Tus finanzas te estaban esperando.","¡Qué pasa, socio! Vamos paso a paso."],
+        salvaje: ["¡Wena, crack! A cuidar esas lucas, que no crecen en los árboles.","¡Llegó el patrón! Hoy no se derrocha ni una moneda.","Jefe, hoy día la billetera se respeta.","¡A ponerle weno al ahorro, socio!","Ni una luca a la deriva, patrón."]
       },
       mezcla: {
-        suave: ["¡Bienvenido, jefe! Vamos con todo.", "¡Hola, patrón! Tus finanzas te esperan."],
-        medio: ["👑 ¡El lord ha regresado! Su fortuna lo espera.", "💀 ¡Volvió el jefe! Que la billetera no tiemble.", "🎖️ ¡Comandante! Las finanzas esperan órdenes.", "😎 ¡Wena, patrón! Vamos con todo."],
-        salvaje: ["💀 ¡El jefe volvió! Que la billetera no tiemble.", "¡El lord ha regresado! Hoy se conquista el presupuesto."]
+        suave: ["¡Bienvenido, jefe! Vamos con todo.","¡Hola, patrón! Tus finanzas te esperan.","Comandante, sus cuentas están listas.","¡Qué bueno verte, lord!"],
+        medio: ["👑 ¡El lord ha regresado! Su fortuna lo espera.","💀 ¡Volvió el jefe! Que la billetera no tiemble.","🎖️ ¡Comandante! Las finanzas esperan órdenes.","😎 ¡Wena, patrón! Vamos con todo.","¡Atención! Ha llegado el dueño de estas lucas.","La leyenda vuelve al reino financiero.","¡Jefe en línea! Activando modo ahorro."],
+        salvaje: ["💀 ¡El jefe volvió! Que la billetera no tiemble.","¡El lord ha regresado! Hoy se conquista el presupuesto.","¡Patrón en línea! Que se escondan los gastos hormiga.","Hoy se viene disciplina financiera sin contemplaciones.","¡A proteger el tesoro, comandante!"]
       }
     };
     const style = document.getElementById("assistantPersonality");
