@@ -57,10 +57,9 @@ function render(){
   $("budgetCaption").textContent=budget?money(budget)+" presupuesto":"Configura tu límite";
   $("budgetCaption").classList.toggle("warning-text",budget>0&&t.expense>budget);
   const projectedExpense=isCurrent?t.expense/elapsed*daysInMonth:t.expense;
-  const projectedIncome=isCurrent?t.income/elapsed*daysInMonth:t.income;
-  $("projection").textContent=money(projectedIncome-projectedExpense);
-  $("projectionHint").textContent=isCurrent?"Balance estimado al cierre":"Balance registrado del mes";
-  $("saving").textContent=money(net);$("savingHint").textContent=net>=0?"Ingresos menos gastos":"Has gastado más de lo ingresado";
+  $("projection").textContent=money(projectedExpense);
+  $("projectionHint").textContent=isCurrent?("Estimación según "+elapsed+" día"+(elapsed===1?"":"s")+" registrado"+(elapsed===1?"":"s")):"Gasto total registrado del mes";
+  $("saving").textContent=money(net);$("savingHint").textContent=net>=0?"Ingresos menos gastos registrados":"Tus gastos superan tus ingresos";
   $("movementCount").textContent=transactionsFor(key).length;
   $("dailyAverage").textContent=money(t.expense/elapsed);
   $("savingRate").textContent=t.income?Math.round(net/t.income*100)+"%":"—";
