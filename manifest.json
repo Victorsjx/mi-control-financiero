@@ -1,22 +1,14 @@
 {
   "name": "Mi Control Financiero",
   "short_name": "Mi Finanzas",
-  "description": "Control personal de ingresos, gastos y presupuestos en pesos chilenos.",
+  "description": "Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1018",
-  "theme_color": "#0b1018",
+  "background_color": "#091018",
+  "theme_color": "#091018",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
   ]
 }
