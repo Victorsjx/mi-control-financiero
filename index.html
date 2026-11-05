@@ -103,6 +103,8 @@
       <label for="assistantHumor">Nivel de humor</label>
       <select id="assistantHumor"><option value="suave">Suave</option><option value="medio">Medio, con bromas</option><option value="salvaje">Sin filtro, pero sin ser pesado</option></select>
       <p>Te saludará y reaccionará a tus ingresos, gastos, ahorros y alertas.</p>
+      <button type="button" class="submit-btn" id="saveAssistantPrefs">Guardar personalidad</button>
+      <p class="assistant-save-status" id="assistantSaveStatus" aria-live="polite">Tus preferencias se guardan en este navegador.</p>
     </div>
     <div class="settings-note"><strong>Guardado en este teléfono</strong><p>Por ahora tus datos permanecen en el almacenamiento local de este navegador. La sincronización entre teléfonos requiere configurar una base de datos segura en la nube.</p></div>
     <button class="submit-btn" id="exportData">Crear copia de seguridad (.json)</button>
@@ -133,6 +135,75 @@
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-  <script src="app.js?v=31"></script>
+  <script src="app.js?v=32"></script>
+  <script>
+  (() => {
+    const KEY = "mi-control-financiero-assistant-v1";
+    const greetings = {
+      mayordomo: {
+        suave: ["Bienvenido, mi estimado jefe. Sus finanzas están listas.", "Su majestad, todo está preparado."],
+        medio: ["👑 ¡Su majestad, el reino financiero está a sus órdenes!", "¡El lord ha regresado! Su fortuna lo espera."],
+        salvaje: ["¡Mi lord ha vuelto! Que tiemblen los gastos innecesarios.", "Majestad, hoy no se aceptan compras absurdas."]
+      },
+      sarcastico: {
+        suave: ["¡Hola, jefe! Hoy cuidaremos esas lucas.", "¡Qué bueno verte! Vamos a portarnos bien."],
+        medio: ["💀 ¡Mira quién volvió! La billetera pidió refuerzos.", "Volvió el responsable de esos gastos misteriosos."],
+        salvaje: ["💀 ¡Volvió el responsable de esos gastos misteriosos!", "Jefe, su billetera presentó una queja formal."]
+      },
+      militar: {
+        suave: ["Comandante, sus finanzas están listas.", "¡Atención, jefe! Comienza la misión financiera."],
+        medio: ["🎖️ ¡Comandante en posición! Revisemos esas cuentas.", "¡A formar filas, lucas! El comandante ha llegado."],
+        salvaje: ["🚨 ¡Comandante! Hoy se obedece al presupuesto.", "¡Operación austeridad! Ni una luca fuera de lugar."]
+      },
+      amigo: {
+        suave: ["¡Qué bueno verte, jefe! ¿Cómo van esas lucas?", "¡Hola, patrón! Vamos con calma."],
+        medio: ["😎 ¡Wena, patrón! Vamos a ordenar la billetera.", "¡Grande, crack! Qué bueno tenerte de vuelta."],
+        salvaje: ["¡Wena, crack! A cuidar esas lucas, que no crecen en los árboles.", "¡Llegó el patrón! Hoy no se derrocha ni una moneda."]
+      },
+      mezcla: {
+        suave: ["¡Bienvenido, jefe! Vamos con todo.", "¡Hola, patrón! Tus finanzas te esperan."],
+        medio: ["👑 ¡El lord ha regresado! Su fortuna lo espera.", "💀 ¡Volvió el jefe! Que la billetera no tiemble.", "🎖️ ¡Comandante! Las finanzas esperan órdenes.", "😎 ¡Wena, patrón! Vamos con todo."],
+        salvaje: ["💀 ¡El jefe volvió! Que la billetera no tiemble.", "¡El lord ha regresado! Hoy se conquista el presupuesto."]
+      }
+    };
+    const style = document.getElementById("assistantPersonality");
+    const humor = document.getElementById("assistantHumor");
+    const greeting = document.getElementById("welcomeGreeting");
+    const save = document.getElementById("saveAssistantPrefs");
+    const status = document.getElementById("assistantSaveStatus");
+    if (!style || !humor || !greeting || !save) return;
+    let prefs = {personality:"mezcla",humor:"medio"};
+    try {
+      const stored = JSON.parse(localStorage.getItem(KEY) || "{}");
+      if (stored && typeof stored === "object") prefs = {...prefs,...stored};
+    } catch {}
+    if (!greetings[prefs.personality]) prefs.personality = "mezcla";
+    if (!greetings[prefs.personality][prefs.humor]) prefs.humor = "medio";
+    style.value = prefs.personality;
+    humor.value = prefs.humor;
+    const paint = () => {
+      const choices = greetings[style.value]?.[humor.value] || greetings.mezcla.medio;
+      greeting.textContent = choices[Math.floor(Math.random() * choices.length)];
+    };
+    const persist = () => {
+      const next = {personality:style.value,humor:humor.value};
+      try {
+        localStorage.setItem(KEY,JSON.stringify(next));
+        const check = JSON.parse(localStorage.getItem(KEY) || "{}");
+        if (check.personality !== next.personality || check.humor !== next.humor) throw new Error("No se pudo verificar el guardado");
+        status.textContent = "✓ Preferencias guardadas en este navegador. Se mantendrán al recargar.";
+        status.dataset.state = "saved";
+        paint();
+      } catch (error) {
+        status.textContent = "No se pudieron guardar las preferencias. Revisa que el navegador permita almacenamiento para este sitio.";
+        status.dataset.state = "error";
+      }
+    };
+    style.addEventListener("change",persist);
+    humor.addEventListener("change",persist);
+    save.addEventListener("click",persist);
+    paint();
+  })();
+  </script>
 </body>
 </html>
