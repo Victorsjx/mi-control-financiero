@@ -423,13 +423,38 @@ function assistantMessage(kind){
  return arr[Math.floor(Math.random()*count)];
 }
 function announce(kind){showToast(assistantMessage(kind))}
-function updateWelcome(){$("welcomeGreeting").textContent=assistantMessage("bienvenida")}
+function updateWelcome(){
+ const style=$("assistantPersonality")?.value||assistantPrefs().personality;
+ const humor=$("assistantHumor")?.value||assistantPrefs().humor;
+ const previews={
+  mayordomo:"👑 ¡Su majestad, el reino financiero está a sus órdenes!",
+  sarcastico:"💀 ¡Mira quién volvió! La billetera pidió refuerzos.",
+  militar:"🎖️ ¡Comandante en posición! Revisemos esas cuentas.",
+  amigo:"😎 ¡Wena, patrón! Vamos a ordenar la billetera.",
+  mezcla:"👑 ¡El lord ha regresado! Su fortuna lo espera."
+ };
+ const alternate={
+  suave:{mayordomo:"Bienvenido, mi estimado jefe. Sus finanzas están listas.",sarcastico:"¡Hola, jefe! Hoy cuidaremos esas lucas.",militar:"¡Atención, jefe! Operación control financiero iniciada.",amigo:"¡Qué bueno verte, jefe! ¿Cómo van esas lucas?",mezcla:"¡Bienvenido, jefe! Vamos con calma y con todo."},
+  medio:{mayordomo:"👑 ¡Su majestad, el reino financiero está a sus órdenes!",sarcastico:"💀 ¡Mira quién volvió! La billetera pidió refuerzos.",militar:"🎖️ ¡Comandante en posición! Revisemos esas cuentas.",amigo:"😎 ¡Wena, patrón! Vamos a ordenar la billetera.",mezcla:"👑 ¡El lord ha regresado! Su fortuna lo espera."},
+  salvaje:{mayordomo:"¡Mi lord ha vuelto! Que tiemblen los gastos innecesarios.",sarcastico:"💀 ¡Volvió el responsable de esos gastos misteriosos!",militar:"🚨 ¡Comandante! Hoy se obedece al presupuesto.",amigo:"¡Wena, crack! A cuidar esas lucas, que no crecen en los árboles.",mezcla:"💀 ¡El jefe volvió! Que la billetera no tiemble."}
+ };
+ const message=(alternate[humor]||alternate.medio)[style]||previews[style]||previews.mezcla;
+ $("welcomeGreeting").textContent=message;
+}
 render();
-updateWelcome();
 $("assistantPersonality").value=assistantPrefs().personality;
 $("assistantHumor").value=assistantPrefs().humor;
-function saveAssistantPrefs(){localStorage.setItem(ASSISTANT_PREF_KEY,JSON.stringify({personality:$("assistantPersonality").value,humor:$("assistantHumor").value}));updateWelcome();showToast("¡Personalidad actualizada, jefe!")}
-$("assistantPersonality").onchange=saveAssistantPrefs;$("assistantHumor").onchange=saveAssistantPrefs;
+updateWelcome();
+function saveAssistantPrefs(){
+ const prefs={personality:$("assistantPersonality").value,humor:$("assistantHumor").value};
+ localStorage.setItem(ASSISTANT_PREF_KEY,JSON.stringify(prefs));
+ updateWelcome();
+ showToast("¡Listo, jefe! Tu asistente ahora es "+$("assistantPersonality").selectedOptions[0].text+" · Humor: "+$("assistantHumor").selectedOptions[0].text);
+}
+["input","change"].forEach(event=>{
+ $("assistantPersonality").addEventListener(event,saveAssistantPrefs);
+ $("assistantHumor").addEventListener(event,saveAssistantPrefs);
+});
 
 
 
