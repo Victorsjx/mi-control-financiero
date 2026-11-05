@@ -2,8 +2,8 @@ const $ = id => document.getElementById(id);
 const STORAGE_KEY = "mi-control-financiero-v1";
 const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
 const expenseCategoryOptions = [{name:"Transporte",icon:"↗"},{name:"Comida",icon:"◉"},{name:"Salidas",icon:"✦"},{name:"Otros",icon:"···"}];
-const incomeCategories = ["Sueldo","Bonos","Ventas","Devoluciones","Otros ingresos"];
-const incomeCategoryOptions = [{name:"Sueldo",icon:"＋"},{name:"Bonos",icon:"✧"},{name:"Ventas",icon:"↗"},{name:"Devoluciones",icon:"↩"},{name:"Otros ingresos",icon:"···"}];
+const incomeCategories = ["Bonos","Ventas","Devoluciones","Otros ingresos"];
+const incomeCategoryOptions = [{name:"Bonos",icon:"✧"},{name:"Ventas",icon:"↗"},{name:"Devoluciones",icon:"↩"},{name:"Otros ingresos",icon:"···"}];
 const categoryIcons = {"Comida":"◉","Alimentación":"◉","Transporte":"↗","Salidas":"✦","Entretenimiento":"✦","Otros":"···","Sueldo":"＋","Bonos":"✧","Ventas":"↗","Devoluciones":"↩","Otros ingresos":"＋"};
 const palette = ["#7667e8","#45b9c2","#6f9ce8","#f1ad48","#e97891","#65c99a","#a48be8","#f18c62","#72b9d9","#d28fc4","#8fc77d","#e0c46a"];
 let state = loadState();
@@ -29,7 +29,7 @@ function money(n){return new Intl.NumberFormat("es-CL",{style:"currency",currenc
 function dateText(s){return new Date(s+"T12:00:00").toLocaleDateString("es-CL",{day:"2-digit",month:"short"})}
 function monthName(key){return monthDate(key).toLocaleDateString("es-CL",{month:"long",year:"numeric"})}
 function transactionsFor(key,type="all"){return state.transactions.filter(t=>t.date.slice(0,7)===key&&(type==="all"||t.type===type))}
-function totals(key){const a=transactionsFor(key);return {income:a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0),expense:a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0)}}
+function totals(key){const a=transactionsFor(key);const extra=a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0);const starting=Number(state.budgets[key]||0);return {income:starting+extra,extraIncome:extra,starting,expense:a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0)}}
 function showToast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2400)}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function populateMonths(){
@@ -54,7 +54,7 @@ function render(){
   $("spendProgress").style.width=Math.min(ratio,100)+"%";
   $("spendProgress").classList.toggle("over-budget",budget>0&&t.expense>budget);
   $("spentPercent").textContent=budget?Math.round(ratio)+"% del presupuesto usado":(t.income?Math.round(t.expense/t.income*100)+"% de ingresos gastados":"Sin presupuesto definido");
-  $("budgetCaption").textContent=budget?money(budget)+" presupuesto":"Configura tu límite";
+  $("budgetCaption").textContent=budget?money(budget)+" sueldo inicial":"Ingresa tu sueldo inicial";
   $("budgetCaption").classList.toggle("warning-text",budget>0&&t.expense>budget);
   const projectedExpense=isCurrent?t.expense/elapsed*daysInMonth:t.expense;
   $("projection").textContent=money(projectedExpense);
@@ -66,7 +66,7 @@ function render(){
   $("savingRateHint").textContent=t.income?"Ahorro sobre ingresos":"Registra ingresos para calcularlo";
   const daysLeft=isCurrent?Math.max(1,daysInMonth-now.getDate()+1):1;
   $("dailyAvailable").textContent=budget?money(Math.max(0,budget-t.expense)/daysLeft):"—";
-  $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" de presupuesto restante":"Define un presupuesto mensual";
+  $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" del dinero inicial restante":"Ingresa tu sueldo inicial";
   renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();
 }
 function localDateInput(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
@@ -89,7 +89,7 @@ function renderAnalytics(){
  const max=Math.max(1,...rows.flatMap(x=>[x.income,x.expense]));
  $("trendChart").innerHTML=rows.some(x=>x.income||x.expense)?'<div class="bar-chart">'+rows.map(x=>'<div class="bar-month"><span>'+x.label+'</span><div class="bar-pair"><i class="bar-income" style="height:'+Math.max(2,x.income/max*100)+'%"></i><i class="bar-expense" style="height:'+Math.max(2,x.expense/max*100)+'%"></i></div><small>'+money(x.income)+' / '+money(x.expense)+'</small></div>').join("")+'</div><div class="chart-key"><span>Ingresos</span><span>Gastos</span></div>':'<div class="empty-state">Registra movimientos para ver tus últimos seis meses.</div>';
  const maxNet=Math.max(1,...rows.map(x=>Math.abs(x.income-x.expense)));$("balanceChart").innerHTML=rows.map(x=>'<div class="ranking-row"><div class="ranking-label"><span>'+monthName(x.key)+'</span><strong>'+money(x.income-x.expense)+'</strong></div><div class="category-budget-track"><span style="width:'+Math.abs(x.income-x.expense)/maxNet*100+'%"></span></div></div>').join("");
- function ranking(type){const map={};state.transactions.filter(x=>x.type===type&&keys.includes(x.date.slice(0,7))).forEach(x=>map[x.category]=(map[x.category]||0)+x.amount);return Object.entries(map).sort((x,y)=>y[1]-x[1]);}
+ function ranking(type){const map={};state.transactions.filter(x=>x.type===type&&keys.includes(x.date.slice(0,7))).forEach(x=>map[x.category]=(map[x.category]||0)+x.amount);if(type==="income")keys.forEach(k=>{const base=Number(state.budgets[k]||0);if(base)map["Sueldo inicial"]=(map["Sueldo inicial"]||0)+base});return Object.entries(map).sort((x,y)=>y[1]-x[1]);}
  function rankingHTML(list){const total=list.reduce((s,x)=>s+x[1],0);return total?list.map((x,i)=>'<div class="ranking-row"><div class="ranking-label"><span>'+escapeHTML(x[0])+'</span><strong>'+money(x[1])+'</strong></div><div class="category-budget-track"><span style="width:'+x[1]/total*100+'%"></span></div><small>'+Math.round(x[1]/total*100)+'% del total</small></div>').join(""):'<div class="empty-state">Aún no hay movimientos suficientes.</div>'}
  const ex=ranking("expense"),ins=ranking("income");$("expenseRanking").innerHTML=rankingHTML(ex);$("incomeRanking").innerHTML=rankingHTML(ins);
  const cur=totals(selectedMonth),pd=monthDate(selectedMonth),pk=monthKey(new Date(pd.getFullYear(),pd.getMonth()-1,1)),old=totals(pk),notes=[];
@@ -119,12 +119,13 @@ function renderComparison(key){
   const msg=diff===0?"Mismo nivel de gastos":diff<0?`Gastaste ${money(Math.abs(diff))} menos que el mes anterior`:`Gastaste ${money(diff)} más que el mes anterior`;
   $("comparison").innerHTML=`<div class="compare-row"><span>${d.toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill" style="width:${cur.expense/max*100}%"></div></div><strong>${money(cur.expense)}</strong></div><div class="compare-row"><span>${monthDate(prev).toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill old-fill" style="width:${old.expense/max*100}%"></div></div><strong>${money(old.expense)}</strong></div><div class="budget-status">${msg}</div>`;
 }
-function renderCategoryPicker(type,selected){const picker=$(type==="expense"?"expenseCategoryPicker":"incomeCategoryPicker");const options=type==="expense"?expenseCategoryOptions:incomeCategoryOptions;picker.innerHTML=options.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");picker.querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;picker.querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
+function renderCategoryPicker(type,selected){const picker=$(type==="expense"?"expenseCategoryPicker":"incomeCategoryPicker");const options=type==="expense"?expenseCategoryOptions:[...incomeCategoryOptions];if(type==="income"&&selected==="Sueldo")options.unshift({name:"Sueldo",icon:"＋"});picker.innerHTML=options.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");picker.querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;picker.querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
 function openTransaction(type,tx=null){
   $("transactionType").value=type;$("transactionId").value=tx?.id||"";
   $("formTitle").textContent=tx?"Editar movimiento":type==="expense"?"Añadir gasto":"Añadir ingreso";
   $("formEyebrow").textContent=tx?"EDITAR REGISTRO":type==="expense"?"REGISTRO DE GASTO":"REGISTRO DE INGRESO";
-  const cats=type==="expense"?expenseCategories:incomeCategories;
+  const cats=type==="expense"?expenseCategories:[...incomeCategories];
+  if(type==="income"&&tx?.category==="Sueldo")cats.unshift("Sueldo");
   $("category").innerHTML=cats.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
   const initialCategory=tx?(type==="expense"?normalizeExpenseCategory(tx.category):tx.category):cats[0];
   $("category").value=initialCategory;
@@ -174,7 +175,7 @@ $("closeBudget").onclick=()=>$("budgetDialog").close();
 function openBudget(){
   $("budgetAmount").value=state.budgets[selectedMonth]??"";
   const spent=totals(selectedMonth).expense,limit=Number(state.budgets[selectedMonth]||0);
-  $("budgetStatus").textContent=`Gasto registrado: ${money(spent)}${limit? ` · Disponible: ${money(limit-spent)}`:""}`;
+  $("budgetStatus").textContent=`Gastos registrados: ${money(spent)}${limit? ` · Dinero inicial restante: ${money(limit-spent)}`:""}`;
   const saved=state.categoryBudgets[selectedMonth]||{};
   $("categoryBudgetFields").innerHTML=expenseCategories.map(category=>{
     const used=transactionsFor(selectedMonth,"expense").filter(x=>normalizeExpenseCategory(x.category)===category).reduce((sum,x)=>sum+x.amount,0);
