@@ -10,12 +10,12 @@ let state = loadState();
 let selectedMonth = monthKey(new Date());
 let toastTimer;
 
-function emptyState(){return {transactions:[],budgets:{},categoryBudgets:{}}}
+function emptyState(){return {transactions:[],budgets:{},categoryBudgets:{},goals:[]}}
 function loadState(){
   try{
     const data=JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(!data||!Array.isArray(data.transactions))return emptyState();
-    return {transactions:data.transactions.filter(validTransaction).map(normalizeTransaction),budgets:data.budgets&&typeof data.budgets==="object"?data.budgets:{},categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{}};
+    return {transactions:data.transactions.filter(validTransaction).map(normalizeTransaction),budgets:data.budgets&&typeof data.budgets==="object"?data.budgets:{},categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{},goals:Array.isArray(data.goals)?data.goals.filter(g=>g&&typeof g.name==="string"&&Number(g.target)>0).map(g=>({id:String(g.id||makeId()),name:g.name.slice(0,50),target:Number(g.target),saved:Math.max(0,Number(g.saved)||0)})):[]};
   }catch{return emptyState()}
 }
 function validTransaction(t){return t&&typeof t==="object"&&(t.type==="income"||t.type==="expense")&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(t.date)&&typeof t.category==="string"}
@@ -67,7 +67,7 @@ function render(){
   const daysLeft=isCurrent?Math.max(1,daysInMonth-now.getDate()+1):1;
   $("dailyAvailable").textContent=budget?money(Math.max(0,budget-t.expense)/daysLeft):"—";
   $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" del dinero inicial restante":"Ingresa tu sueldo inicial";
-  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();
+  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();renderGoals();
 }
 function localDateInput(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function renderSmartPanel(key,t,budget,net){
@@ -80,7 +80,7 @@ function renderSmartPanel(key,t,budget,net){
  if(old.expense>0){const delta=Math.round((t.expense-old.expense)/old.expense*100);msg+=" Tus gastos están "+Math.abs(delta)+"% "+(delta>0?"sobre":"bajo")+" el mes anterior.";}
  $("smartInsights").textContent=msg;
  const saved=state.categoryBudgets[key]||{};
- $("dashboardCategoryBudgets").innerHTML=expenseCategories.map(cat=>{const used=transactionsFor(key,"expense").filter(x=>normalizeExpenseCategory(x.category)===cat).reduce((s,x)=>s+x.amount,0);const cap=Number(saved[cat]||0);if(!cap)return "";const p=used/cap*100;return '<div class="dashboard-budget-row"><div class="dashboard-budget-top"><strong>'+cat+'</strong><span>'+money(used)+' / '+money(cap)+'</span></div><div class="category-budget-track"><span class="'+(p>=100?"over":"")+'" style="width:'+Math.min(100,p)+'%"></span></div><small>'+(p>=100?"Límite superado":Math.round(p)+"% utilizado")+'</small></div>';}).join("")||'<div class="empty-state">Configura límites por categoría en Presupuesto para ver su avance aquí.</div>';
+ $("dashboardCategoryBudgets").innerHTML=expenseCategories.map(cat=>{const used=transactionsFor(key,"expense").filter(x=>normalizeExpenseCategory(x.category)===cat).reduce((s,x)=>s+x.amount,0);const cap=Number(saved[cat]||0);if(!cap)return "";const p=used/cap*100;return '<div class="dashboard-budget-row"><div class="dashboard-budget-top"><strong>'+cat+'</strong><span>'+money(used)+' / '+money(cap)+'</span></div><div class="category-budget-track"><span class="'+(p>=100?"over":"")+'" style="width:'+Math.min(100,p)+'%"></span></div><small>'+(p>=100?"Límite superado":Math.round(p)+"% utilizado")+'</small></div>';}).join("")||'<div class="empty-state">Configura límites por categoría en Sueldo para ver su avance aquí.</div>';
 }
 function renderAnalytics(){
  const d=monthDate(selectedMonth);const keys=Array.from({length:6},(_,i)=>monthKey(new Date(d.getFullYear(),d.getMonth()-5+i,1)));
@@ -195,13 +195,13 @@ $("saveBudget").onclick=()=>{
   }
   if(raw==="")delete state.budgets[selectedMonth];else state.budgets[selectedMonth]=n;
   if(Object.keys(categoryLimits).length)state.categoryBudgets[selectedMonth]=categoryLimits;else delete state.categoryBudgets[selectedMonth];
-  saveState();$("budgetDialog").close();render();showToast("Presupuestos actualizados");
+  saveState();$("budgetDialog").close();render();showToast("Sueldo y límites actualizados");
 };
 $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").onclick=()=>$("settingsDialog").showModal();
-$("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
+$("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
 $("importData").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.transactions)||!data.budgets||typeof data.budgets!=="object"||!data.transactions.every(validTransaction))throw Error("Formato no válido");if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets,categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{}};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
+  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.transactions)||!data.budgets||typeof data.budgets!=="object"||!data.transactions.every(validTransaction))throw Error("Formato no válido");if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets,categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{},goals:Array.isArray(data.goals)?data.goals:[]};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
 };
 $("clearData").onclick=()=>{if(confirm("Esto eliminará todos tus movimientos y presupuestos de este teléfono. ¿Ya exportaste una copia?")){state=emptyState();saveState();render();$("settingsDialog").close();showToast("Datos eliminados")}};
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
@@ -211,6 +211,11 @@ $("exportCsv").onclick=()=>{
   const csv=["Fecha;Tipo;Categoría;Descripción;Monto CLP",...rows.map(x=>[x.date,x.type==="income"?"Ingreso":"Gasto",x.category,x.description,x.amount].map(quote).join(";"))].join("\n");
   downloadBlob(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}),"historial-financiero.csv");
 };
-document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===b));const stats=b.dataset.tab==="analytics";$("analyticsScreen").hidden=!stats;Array.from(document.querySelector("main").children).forEach(el=>{if(el.id!=="analyticsScreen")el.hidden=stats});if(b.dataset.tab==="history")openHistory();if(b.dataset.tab==="budget")openBudget();if(b.dataset.tab==="home"){window.scrollTo({top:0,behavior:"smooth"});render()}if(stats){renderAnalytics();window.scrollTo({top:0,behavior:"smooth"})}});
+function switchTab(tab){document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));const visibleTab=(tab==="budget"||tab==="history")?"home":tab;document.querySelectorAll("[data-view]").forEach(el=>{el.hidden=el.dataset.view!==visibleTab});window.scrollTo({top:0,behavior:"smooth"});if(tab==="add"){openTransaction("expense");return}if(tab==="budget"){openBudget();return}if(tab==="history"){openHistory();return}if(tab==="home")render();if(tab==="analytics")renderAnalytics();if(tab==="goals")renderGoals()}document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
+
+function renderGoals(){const goals=state.goals||[],target=goals.reduce((s,g)=>s+Number(g.target||0),0),saved=goals.reduce((s,g)=>s+Number(g.saved||0),0);$("goalsTotal").textContent=money(saved);$("goalsCaption").textContent=goals.length?money(saved)+" de "+money(target)+" acumulados entre "+goals.length+" meta"+(goals.length===1?"":"s"):"Aún no tienes metas activas";$("goalsList").innerHTML=goals.length?goals.map(g=>{const p=Math.min(100,Number(g.saved)/Number(g.target)*100);return '<article class="goal-card"><div class="goal-head"><strong>'+escapeHTML(g.name)+'</strong><span>'+Math.round(p)+'%</span></div><div class="goal-track"><span style="width:'+p+'%"></span></div><div class="goal-foot"><span>'+money(g.saved)+' ahorrados</span><strong>'+money(g.target)+'</strong></div><div class="goal-actions"><button class="mini-action" data-goal-edit="'+escapeHTML(g.id)+'">Editar</button><button class="mini-action delete-tx" data-goal-delete="'+escapeHTML(g.id)+'">Eliminar</button></div></article>'}).join(""):'<div class="empty-state">Crea una meta para darle un destino concreto a tu ahorro.</div>';document.querySelectorAll("[data-goal-edit]").forEach(b=>b.onclick=()=>editGoal(b.dataset.goalEdit));document.querySelectorAll("[data-goal-delete]").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar esta meta?")){state.goals=goals.filter(g=>g.id!==b.dataset.goalDelete);saveState();renderGoals()}})}
+function editGoal(id=""){const g=(state.goals||[]).find(x=>x.id===id);$("goalId").value=g?.id||"";$("goalDialogTitle").textContent=g?"Editar meta":"Nueva meta";$("goalName").value=g?.name||"";$("goalTarget").value=g?.target||"";$("goalSaved").value=g?.saved??"";$("goalDialog").showModal()}
+$("addGoal").onclick=()=>editGoal();$("closeGoal").onclick=()=>$("goalDialog").close();
+$("saveGoal").onclick=()=>{const name=$("goalName").value.trim(),target=Number($("goalTarget").value),saved=Number($("goalSaved").value||0),id=$("goalId").value;if(!name||!Number.isSafeInteger(target)||target<=0||!Number.isSafeInteger(saved)||saved<0){showToast("Revisa el nombre y los montos de la meta");return}const item={id:id||makeId(),name,target,saved};if(!Array.isArray(state.goals))state.goals=[];const i=state.goals.findIndex(g=>g.id===id);if(i>=0)state.goals[i]=item;else state.goals.push(item);saveState();$("goalDialog").close();renderGoals();showToast("Meta guardada")};
