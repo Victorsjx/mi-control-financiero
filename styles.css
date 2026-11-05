@@ -283,3 +283,8 @@ dialog{max-height:min(88dvh,760px);overscroll-behavior:contain}
  .legend{gap:9px}.legend-row{font-size:10px;gap:6px}.legend-row strong{font-size:10px}
 }
 @media(max-width:350px){.chart-card{grid-template-columns:1fr}.donut{width:124px;height:124px;justify-self:center}.hero-top{flex-wrap:wrap}.month-chip{margin-left:auto}}
+
+/* v27: saludo visible al abrir la aplicación */
+.welcome-greeting{display:flex;align-items:center;gap:8px;margin:0 2px 14px;padding:10px 13px;border:1px solid #35465e;border-radius:12px;background:linear-gradient(110deg,#1c2b40,#242d4a);color:#dce5f2;font-size:12px;font-weight:750;letter-spacing:.1px;min-height:38px;animation:welcomeFadeIn .35s ease both}
+@keyframes welcomeFadeIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.welcome-greeting{animation:none}}
