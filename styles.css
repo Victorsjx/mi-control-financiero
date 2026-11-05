@@ -56,3 +56,26 @@ body{background:radial-gradient(ellipse at 12% -10%,#263454 0,transparent 38%),l
 dialog{background:#1b2a3e;color:#edf2fa;border-color:#35465e;box-shadow:0 25px 80px #0009}dialog::backdrop{background:#050a14bd}.modal-head h2{color:#f0f4fa}.modal label{color:#b0bfd1}.modal input:not([type=file]),.modal select,.history-date-filters input{background:#111d2d;border-color:#35465e;color:#edf2fa}.modal-copy,.tiny-note{color:#9aabc0}.settings-note{background:#22334a;border-color:#394d68;color:#e9eff8}.settings-note p{color:#a7b7ca}.file-label{background:#293a52;color:#dce6f4}.outline-btn{background:#293751;border-color:#455578;color:#c7bdff}.danger-btn{background:#422b3a;border-color:#704454;color:#ffb6c1}.category-option{background:#202f45;border-color:#3a4b63;color:#bac7d8}.category-option.selected{background:#37345e;border-color:#9585ff;color:#e3dcff}.category-option-icon{color:#b5a7ff}.budget-status,.history-summary{color:#a1b1c5}.toast{background:#e1dcff;color:#282047}
 .goals-intro{margin-bottom:12px;min-height:90px}.goals-intro strong{display:block;font-size:24px;color:#f1f5fb;margin:8px 0 4px}.goals-list{display:grid;gap:10px}.goal-card{background:#1c2b40;border:1px solid #304158;border-radius:15px;padding:14px}.goal-head,.goal-foot{display:flex;justify-content:space-between;align-items:center;gap:10px}.goal-head strong{font-size:13px;color:#edf2fa}.goal-head span{color:#b7a9ff;font-weight:800;font-size:12px}.goal-track{height:7px;background:#35465e;border-radius:20px;overflow:hidden;margin:12px 0 9px}.goal-track span{display:block;height:100%;background:linear-gradient(90deg,#9585ff,#70d5ad);border-radius:20px}.goal-foot{font-size:10px;color:#9eafc3}.goal-foot strong{color:#e5edf7}.goal-actions{display:flex;justify-content:flex-end;gap:14px;margin-top:8px;border-top:1px solid #304158;padding-top:6px}
 @media(max-width:390px){.app-shell{padding-left:12px;padding-right:12px}.bottom-nav{padding-left:3px;padding-right:3px}.nav-item{font-size:8px}.nav-item span{font-size:18px}.metric-card{padding:10px;min-height:98px}.hero-card{padding:17px}}
+
+/* v13: historial y sueldo como pantallas completas; navegación de cinco destinos */
+[hidden]{display:none!important}
+.screen-page{display:block;width:100%;max-width:100%;min-height:calc(100vh - 150px);padding:18px 0 28px;margin:0 auto;background:transparent;border:0;border-radius:0;box-shadow:none;color:var(--text)}
+.screen-page>.modal-head{margin:0 0 22px;padding:0 0 16px;border-bottom:1px solid #304158}
+.screen-page>.modal-head h2{font-size:27px;letter-spacing:-.8px}
+.screen-page .history-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.screen-page .history-tools select,.screen-page .history-date-filters input,.screen-page .search-input{min-width:0;background:#1c2b40;color:#edf2fa;border:1px solid #35465e;border-radius:14px;min-height:54px;padding:0 14px}
+.screen-page .history-date-filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.screen-page .history-date-filters label{display:grid;gap:6px;color:#aab9cb;font-size:11px}
+.screen-page .history-summary{margin:18px 2px 12px;font-size:12px;line-height:1.6}
+.screen-page #fullHistory{padding:8px 14px;border:1px solid #304158;border-radius:18px;background:#1c2b40}
+.screen-page .history-actions{padding:0 0 12px;margin:0 0 12px;border-bottom:1px solid #304158}
+.screen-page #exportCsv{width:100%;margin-top:14px;min-height:54px}
+.screen-page .budget-category-heading{margin-top:24px}
+.screen-page #saveBudget{width:100%;margin-top:18px}
+.screen-page .modal-copy{line-height:1.7}
+.bottom-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center}
+.bottom-nav .nav-item{width:100%;min-width:0}
+.bottom-nav .nav-add{order:0;transform:translateY(-8px)}
+.bottom-nav .nav-add span{width:48px;height:48px;border-radius:50%;font-size:29px;box-shadow:0 7px 20px #7865ec55}
+@media(min-width:700px){.screen-page{max-width:760px}.screen-page .history-tools{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:390px){.screen-page{padding-top:12px}.screen-page>.modal-head h2{font-size:25px}.screen-page .history-tools{gap:7px}.screen-page .history-tools select{padding:0 9px;font-size:12px}.bottom-nav .nav-add span{width:44px;height:44px}}
