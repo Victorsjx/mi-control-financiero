@@ -181,3 +181,24 @@ dialog{background:#1b2a3e;color:#edf2fa;border-color:#35465e;box-shadow:0 25px 8
  .bottom-nav .nav-item{height:56px!important;min-height:56px!important;max-height:56px!important}
  .bottom-nav .nav-add>.ui-icon{width:44px!important;height:44px!important;flex-basis:44px!important;padding:10px!important}
 }
+
+/* v17 · transiciones premium, ligeras y accesibles */
+[data-view]:not([hidden]){will-change:transform,opacity}
+.screen-enter{animation:screenSlideIn 280ms cubic-bezier(.2,.75,.25,1) both}
+@keyframes screenSlideIn{from{opacity:0;transform:translate3d(22px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.metric-card,.chart-card,.transactions-card,.comparison-card,.insight-card,.analytics-card,.hero-card,.goal-card{animation:cardReveal 360ms cubic-bezier(.2,.7,.25,1) both}
+@keyframes cardReveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.metric-grid>.metric-card:nth-child(2){animation-delay:35ms}.metric-grid>.metric-card:nth-child(3){animation-delay:70ms}.metric-grid>.metric-card:nth-child(4){animation-delay:105ms}.metric-grid>.metric-card:nth-child(5){animation-delay:140ms}.metric-grid>.metric-card:nth-child(6){animation-delay:175ms}
+.bar-income,.bar-expense{transform-origin:bottom;animation:chartGrow 520ms cubic-bezier(.2,.75,.25,1) both}
+.category-budget-track>span,.compare-fill{transform-origin:left;animation:chartGrowX 480ms cubic-bezier(.2,.75,.25,1) both}
+@keyframes chartGrow{from{transform:scaleY(.08);opacity:.55}to{transform:scaleY(1);opacity:1}}
+@keyframes chartGrowX{from{transform:scaleX(.05);opacity:.6}to{transform:scaleX(1);opacity:1}}
+.donut{animation:donutReveal 600ms ease-out both}
+@keyframes donutReveal{from{transform:rotate(-35deg) scale(.94);opacity:.6}to{transform:rotate(0) scale(1);opacity:1}}
+button,.action-btn,.nav-item{transition:transform 160ms ease,background-color 180ms ease,border-color 180ms ease,color 180ms ease,box-shadow 180ms ease}
+.is-pressed{transform:scale(.97)!important}
+.nav-add.is-pressed>.ui-icon{transform:scale(.92)}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ [data-view]:not([hidden]){will-change:auto}
+}
