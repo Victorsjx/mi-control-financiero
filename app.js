@@ -324,27 +324,47 @@ let screenTransitionToken=0;
 function switchTab(tab){
  const target=tab==="add"?"home":tab;
  const views=[...document.querySelectorAll("[data-view]")];
- const current=views.find(el=>!el.hidden);
- const next=views.find(el=>el.dataset.view===target);
+ const currentViews=views.filter(el=>!el.hidden);
+ const nextViews=views.filter(el=>el.dataset.view===target);
+ const currentTab=currentViews[0]?.dataset.view;
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
  const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
  const token=++screenTransitionToken;
- if(!next){views.forEach(el=>{el.hidden=el!==current});}
- else if(current===next){next.hidden=false;}
- else if(reduced||!current){
-  views.forEach(el=>{el.hidden=el!==next;el.classList.remove("screen-enter","screen-exit")});
+ if(!nextViews.length){
+  views.forEach(el=>{el.hidden=true;el.classList.remove("screen-enter","screen-exit")});
+ }else if(currentTab===target){
+  views.forEach(el=>{
+   const active=el.dataset.view===target;
+   el.hidden=!active;
+   el.classList.remove("screen-enter","screen-exit");
+  });
+ }else if(reduced||!currentViews.length){
+  views.forEach(el=>{
+   const active=el.dataset.view===target;
+   el.hidden=!active;
+   el.classList.remove("screen-enter","screen-exit");
+  });
  }else{
-  views.forEach(el=>{if(el!==current&&el!==next){el.hidden=true;el.classList.remove("screen-enter","screen-exit")}});
-  next.hidden=false;
-  next.classList.remove("screen-enter","screen-exit");
-  current.classList.remove("screen-enter","screen-exit");
-  current.classList.add("screen-exit");
-  requestAnimationFrame(()=>{if(token===screenTransitionToken)next.classList.add("screen-enter")});
+  const currentGroup=views.filter(el=>!el.hidden);
+  views.forEach(el=>{
+   const isCurrent=currentGroup.includes(el);
+   const isNext=el.dataset.view===target;
+   if(!isCurrent&&!isNext){el.hidden=true;el.classList.remove("screen-enter","screen-exit")}
+  });
+  const nextGroup=nextViews;
+  nextGroup.forEach(el=>{
+   el.hidden=false;
+   el.classList.remove("screen-enter","screen-exit");
+   el.classList.add("screen-enter");
+  });
+  currentGroup.forEach(el=>{
+   el.classList.remove("screen-enter","screen-exit");
+   el.classList.add("screen-exit");
+  });
   window.setTimeout(()=>{
    if(token!==screenTransitionToken)return;
-   current.hidden=true;
-   current.classList.remove("screen-exit");
-   next.classList.remove("screen-enter");
+   currentGroup.forEach(el=>{el.hidden=true;el.classList.remove("screen-exit")});
+   nextGroup.forEach(el=>el.classList.remove("screen-enter"));
   },520);
  }
  window.scrollTo({top:0,behavior:reduced?"auto":"smooth"});
