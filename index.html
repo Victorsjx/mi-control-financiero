@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1018">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mi Finanzas">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Mi Control Financiero</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">₱</div>
+        <div><div class="eyebrow">TU DINERO, BAJO CONTROL</div><h1>Mi Finanzas</h1></div>
+      </div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Configuración">⚙</button>
+    </header>
+
+    <main>
+      <section class="hero-card">
+        <div class="hero-top">
+          <div><div class="muted-label">DISPONIBLE ESTE MES</div><div class="balance" id="balance">$0</div></div>
+          <div class="month-chip" id="monthLabel">Este mes</div>
+        </div>
+        <div class="hero-stats">
+          <div><span class="stat-dot income-dot"></span><span class="muted-label">Ingresos</span><strong id="incomeTotal">$0</strong></div>
+          <div><span class="stat-dot expense-dot"></span><span class="muted-label">Gastos</span><strong id="expenseTotal">$0</strong></div>
+        </div>
+        <div class="progress-track"><div id="spendProgress" class="progress-fill"></div></div>
+        <div class="progress-caption"><span id="spentPercent">0% gastado</span><span id="budgetCaption">Registra tus movimientos</span></div>
+      </section>
+
+      <section class="quick-actions">
+        <button class="action-btn primary" id="addExpense"><span>−</span> Añadir gasto</button>
+        <button class="action-btn secondary" id="addIncome"><span>＋</span> Añadir ingreso</button>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Según tu ritmo actual</small></article>
+          <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Ahorro del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><div><div class="eyebrow">DISTRIBUCIÓN</div><h2>¿En qué gastas?</h2></div></div>
+        <div class="chart-card">
+          <div class="donut-wrap"><div class="donut" id="donut"><div><strong id="donutTotal">$0</strong><span>GASTOS</span></div></div></div>
+          <div class="legend" id="categoryLegend"><div class="empty-state">Tus categorías aparecerán aquí.</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><div><div class="eyebrow">ACTIVIDAD</div><h2>Movimientos recientes</h2></div><button class="text-btn" id="showAll">Ver historial</button></div>
+        <div class="transactions-card" id="recentList"><div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div></div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading"><div><div class="eyebrow">COMPARACIÓN</div><h2>Mes contra mes</h2></div></div>
+        <div class="comparison-card" id="comparison"><div class="empty-state">Registra movimientos en distintos meses para comparar.</div></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button>
+      <button class="nav-item" data-tab="history"><span>▤</span>Historial</button>
+      <button class="nav-item" data-tab="budget"><span>◷</span>Presupuestos</button>
+    </nav>
+  </div>
+
+  <dialog id="transactionDialog" class="modal">
+    <form id="transactionForm" method="dialog">
+      <div class="modal-head"><div><div class="eyebrow" id="formEyebrow">NUEVO MOVIMIENTO</div><h2 id="formTitle">Añadir gasto</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
+      <input type="hidden" id="transactionType" value="expense">
+      <label for="amount">Monto (CLP)</label><input id="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 15000" required>
+      <label for="category">Categoría</label><select id="category"></select>
+      <label for="description">Descripción</label><input id="description" type="text" maxlength="70" placeholder="Ej. Supermercado, locomoción...">
+      <label for="date">Fecha</label><input id="date" type="date" required>
+      <button class="submit-btn" type="submit">Guardar movimiento</button>
+    </form>
+  </dialog>
+
+  <dialog id="historyDialog" class="modal">
+    <div class="modal-head"><div><div class="eyebrow">TODOS TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory">×</button></div>
+    <div class="history-tools"><select id="historyMonth"></select><select id="historyType"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select></div>
+    <div id="fullHistory" class="transactions-card"></div>
+  </dialog>
+
+  <dialog id="budgetDialog" class="modal">
+    <div class="modal-head"><div><div class="eyebrow">PLANIFICA TU MES</div><h2>Presupuesto mensual</h2></div><button class="close-btn" id="closeBudget">×</button></div>
+    <p class="modal-copy">Define un límite total de gastos para el mes seleccionado.</p>
+    <label for="budgetAmount">Presupuesto mensual (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" placeholder="Ej. 300000">
+    <button class="submit-btn" id="saveBudget">Guardar presupuesto</button>
+    <div id="budgetStatus" class="budget-status"></div>
+  </dialog>
+
+  <dialog id="settingsDialog" class="modal">
+    <div class="modal-head"><div><div class="eyebrow">PREFERENCIAS</div><h2>Configuración</h2></div><button class="close-btn" id="closeSettings">×</button></div>
+    <p class="modal-copy">Tus datos se guardan localmente en este navegador. Exporta una copia de seguridad periódicamente.</p>
+    <button class="submit-btn" id="exportData">Exportar mis datos (.json)</button>
+    <label class="file-label">Importar copia de seguridad<input type="file" id="importData" accept="application/json"></label>
+    <button class="danger-btn" id="clearData">Eliminar todos mis movimientos</button>
+    <p class="tiny-note">La app no envía tus movimientos a ningún servidor. Si borras los datos del navegador, puedes perderlos si no tienes una copia.</p>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
