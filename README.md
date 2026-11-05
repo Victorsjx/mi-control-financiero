@@ -2,6 +2,11 @@
 
 Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en pesos chilenos.
 
+## Versión 2.2
+- Lector de boletas con OCR mediante Tabscanner y validación anti-bots Cloudflare Turnstile.
+- Revisión manual obligatoria de comercio, monto, fecha y categoría antes de guardar el gasto.
+- Las fotografías no se guardan en localStorage; Tabscanner informa una retención de hasta 90 días.
+
 ## Versión 2.1
 - Panel mensual con balance, ingresos, gastos y avance del presupuesto.
 - Proyección del balance al cierre, tasa de ahorro y disponible diario estimado.
