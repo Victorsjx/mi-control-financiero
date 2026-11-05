@@ -390,6 +390,7 @@ const welcomeMessages=[
  "¡Qué pasa, jefe supremo! 👑"
 ];
 $("welcomeGreeting").textContent=welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)];
+$("welcomeGreeting").setAttribute("data-ready","true");
 
 
 document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEach(button=>{
