@@ -5,7 +5,7 @@ const expenseCategoryOptions = [{name:"Transporte",icon:"↗"},{name:"Comida",ic
 const incomeCategories = ["Sueldo","Bonos","Ventas","Devoluciones","Otros ingresos"];
 const incomeCategoryOptions = [{name:"Sueldo",icon:"＋"},{name:"Bonos",icon:"✧"},{name:"Ventas",icon:"↗"},{name:"Devoluciones",icon:"↩"},{name:"Otros ingresos",icon:"···"}];
 const categoryIcons = {"Comida":"◉","Alimentación":"◉","Transporte":"↗","Salidas":"✦","Entretenimiento":"✦","Otros":"···","Sueldo":"＋","Bonos":"✧","Ventas":"↗","Devoluciones":"↩","Otros ingresos":"＋"};
-const palette = ["#5bd6a2","#a78bfa","#76a9fa","#ffb86b","#ff7887","#5bd6c5","#e6cf6b","#d58cf2","#8fa8bc","#d28f7c","#75c8e8","#b6d66c"];
+const palette = ["#7667e8","#45b9c2","#6f9ce8","#f1ad48","#e97891","#65c99a","#a48be8","#f18c62","#72b9d9","#d28fc4","#8fc77d","#e0c46a"];
 let state = loadState();
 let selectedMonth = monthKey(new Date());
 let toastTimer;
