@@ -202,3 +202,18 @@ button,.action-btn,.nav-item{transition:transform 160ms ease,background-color 18
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
  [data-view]:not([hidden]){will-change:auto}
 }
+
+/* v18 · ritmo más pausado y fluido */
+.screen-enter{animation-duration:520ms!important}
+.metric-card,.chart-card,.transactions-card,.comparison-card,.insight-card,.analytics-card,.hero-card,.goal-card{animation-duration:560ms!important}
+.metric-grid>.metric-card:nth-child(2){animation-delay:55ms!important}
+.metric-grid>.metric-card:nth-child(3){animation-delay:110ms!important}
+.metric-grid>.metric-card:nth-child(4){animation-delay:165ms!important}
+.metric-grid>.metric-card:nth-child(5){animation-delay:220ms!important}
+.metric-grid>.metric-card:nth-child(6){animation-delay:275ms!important}
+.bar-income,.bar-expense{animation-duration:900ms!important}
+.category-budget-track>span,.compare-fill{animation-duration:820ms!important}
+.donut{animation-duration:950ms!important}
+button,.action-btn,.nav-item{transition-duration:240ms!important}
+.progress-fill{transition-duration:650ms!important}
+.category-option{transition-duration:260ms!important}
