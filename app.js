@@ -50,6 +50,9 @@ const palette = ["#7667e8","#45b9c2","#6f9ce8","#f1ad48","#e97891","#65c99a","#a
 let state = loadState();
 let selectedMonth = monthKey(new Date());
 let toastTimer;
+let monthTransactionIndex=null;
+let historyPage=0;
+const HISTORY_PAGE_SIZE=100;
 
 function emptyState(){return {transactions:[],budgets:{},categoryBudgets:{},goals:[]}}
 function loadState(){
@@ -63,13 +66,13 @@ function validTransaction(t){return t&&typeof t==="object"&&(t.type==="income"||
 function normalizeExpenseCategory(category){if(category==="Transporte")return "Transporte";if(["Alimentación","Comida"].includes(category))return "Comida";if(["Entretenimiento","Salidas","Regalos"].includes(category))return "Salidas";return "Otros"}
 function normalizeTransaction(t){return {id:String(t.id||makeId()),type:t.type,amount:Math.round(Number(t.amount)),category:t.type==="expense"?normalizeExpenseCategory(t.category):t.category,description:String(t.description||"").slice(0,70),date:t.date}}
 function makeId(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2)}
-function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));monthTransactionIndex=null}
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
 function monthDate(key){const [y,m]=key.split("-").map(Number);return new Date(y,m-1,1)}
 function money(n){return new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",maximumFractionDigits:0}).format(Math.round(n||0))}
 function dateText(s){return new Date(s+"T12:00:00").toLocaleDateString("es-CL",{day:"2-digit",month:"short"})}
 function monthName(key){return monthDate(key).toLocaleDateString("es-CL",{month:"long",year:"numeric"})}
-function transactionsFor(key,type="all"){return state.transactions.filter(t=>t.date.slice(0,7)===key&&(type==="all"||t.type===type))}
+function transactionsFor(key,type="all"){if(!monthTransactionIndex){monthTransactionIndex=new Map();for(const tx of state.transactions){const k=tx.date.slice(0,7);if(!monthTransactionIndex.has(k))monthTransactionIndex.set(k,[]);monthTransactionIndex.get(k).push(tx)}}const rows=monthTransactionIndex.get(key)||[];return type==="all"?rows:rows.filter(t=>t.type===type)}
 function totals(key){const a=transactionsFor(key);const extra=a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0);const starting=Number(state.budgets[key]||0);return {income:starting+extra,extraIncome:extra,starting,expense:a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0)}}
 function showToast(msg){$("toast").textContent=msg;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2400)}
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -259,14 +262,14 @@ function openHistory(){$("historyMonth").value=selectedMonth;$("historyType").va
 function filteredHistory(){
   const key=$("historyMonth").value,type=$("historyType").value,category=$("historyCategory").value;
   const from=$("historyFrom").value,to=$("historyTo").value,q=$("historySearch").value.trim().toLocaleLowerCase("es-CL");
-  return state.transactions.filter(x=>(key==="all"||x.date.slice(0,7)===key)&&(type==="all"||x.type===type)&&(category==="all"||x.category===category)&&(!from||x.date>=from)&&(!to||x.date<=to)&&(!q||`${x.description} ${x.category}`.toLocaleLowerCase("es-CL").includes(q))).sort((x,y)=>y.date.localeCompare(x.date));
+  const rows=state.transactions.filter(x=>(key==="all"||x.date.slice(0,7)===key)&&(type==="all"||x.type===type)&&(category==="all"||x.category===category)&&(!from||x.date>=from)&&(!to||x.date<=to)&&(!q||`${x.description} ${x.category}`.toLocaleLowerCase("es-CL").includes(q)));rows.sort((x,y)=>y.date.localeCompare(x.date)||String(y.id).localeCompare(String(x.id)));return rows;
 }
 function renderHistory(){
   populateHistoryCategories();
   const a=filteredHistory();
   const inc=a.filter(x=>x.type==="income").reduce((s,x)=>s+x.amount,0),exp=a.filter(x=>x.type==="expense").reduce((s,x)=>s+x.amount,0);
   $("historySummary").textContent=`${a.length} movimientos · Ingresos ${money(inc)} · Gastos ${money(exp)} · Balance ${money(inc-exp)}`;
-  $("fullHistory").innerHTML=a.length?a.map(x=>`${txHTML(x,true)}<div class="history-actions"><button class="mini-action edit-tx" data-id="${escapeHTML(x.id)}">Editar</button><button class="mini-action delete-tx" data-id="${escapeHTML(x.id)}">Eliminar</button></div>`).join(""):'<div class="empty-state">No hay movimientos para este filtro.</div>';
+  const pageCount=Math.max(1,Math.ceil(a.length/HISTORY_PAGE_SIZE));historyPage=Math.min(historyPage,pageCount-1);const visible=a.slice(historyPage*HISTORY_PAGE_SIZE,(historyPage+1)*HISTORY_PAGE_SIZE);$("fullHistory").innerHTML=visible.length?visible.map(x=>`${txHTML(x,true)}<div class="history-actions"><button class="mini-action edit-tx" data-id="${escapeHTML(x.id)}">Editar</button><button class="mini-action delete-tx" data-id="${escapeHTML(x.id)}">Eliminar</button></div>`).join(""):'<div class="empty-state">No hay movimientos para este filtro.</div>';if(a.length>HISTORY_PAGE_SIZE){$("fullHistory").insertAdjacentHTML("beforeend",`<div class="history-pagination"><button class="mini-action" id="historyPrev" ${historyPage===0?"disabled":""}>Anterior</button><span>Página ${historyPage+1} de ${pageCount} · ${a.length} registros</span><button class="mini-action" id="historyNext" ${historyPage>=pageCount-1?"disabled":""}>Siguiente</button></div>`);$("historyPrev").onclick=()=>{historyPage--;renderHistory()};$("historyNext").onclick=()=>{historyPage++;renderHistory()}}
   document.querySelectorAll(".edit-tx").forEach(b=>b.onclick=()=>{const tx=state.transactions.find(x=>x.id===b.dataset.id);if(tx){switchTab("home");openTransaction(tx.type,tx)}});
   document.querySelectorAll(".delete-tx").forEach(b=>b.onclick=()=>{if(confirm("¿Eliminar este movimiento?")){state.transactions=state.transactions.filter(x=>x.id!==b.dataset.id);saveState();render();renderHistory();showToast("Movimiento eliminado")}});
 }
@@ -276,7 +279,7 @@ function populateHistoryCategories(){
   $("historyCategory").innerHTML='<option value="all">Todas las categorías</option>'+categories.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
   $("historyCategory").value=categories.includes(current)?current:"all";
 }
-$("historyMonth").onchange=renderHistory;$("historyType").onchange=renderHistory;$("historyCategory").onchange=renderHistory;$("historyFrom").onchange=renderHistory;$("historyTo").onchange=renderHistory;$("historySearch").oninput=renderHistory;$("closeHistory").onclick=()=>switchTab("home");
+const resetHistoryPage=()=>{historyPage=0;renderHistory()};$("historyMonth").onchange=resetHistoryPage;$("historyType").onchange=resetHistoryPage;$("historyCategory").onchange=resetHistoryPage;$("historyFrom").onchange=resetHistoryPage;$("historyTo").onchange=resetHistoryPage;$("historySearch").oninput=resetHistoryPage;$("closeHistory").onclick=()=>switchTab("home");
 $("closeBudget").onclick=()=>switchTab("home");
 function openBudget(){
   $("budgetAmount").value=state.budgets[selectedMonth]??"";
@@ -307,7 +310,7 @@ $("closeSettings").onclick=()=>$("settingsDialog").close();$("settingsBtn").oncl
 $("exportData").onclick=()=>{const blob=new Blob([JSON.stringify({version:3,exportedAt:new Date().toISOString(),...state},null,2)],{type:"application/json"});downloadBlob(blob,"mi-control-financiero-backup.json");showToast("Copia de seguridad creada")};
 $("importData").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
-  try{const data=JSON.parse(await f.text());if(!Array.isArray(data.transactions)||!data.budgets||typeof data.budgets!=="object"||!data.transactions.every(validTransaction))throw Error("Formato no válido");if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets,categoryBudgets:data.categoryBudgets&&typeof data.categoryBudgets==="object"?data.categoryBudgets:{},goals:Array.isArray(data.goals)?data.goals:[]};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
+  try{if(f.size>10*1024*1024)throw Error("La copia supera el máximo de 10 MB");const data=JSON.parse(await f.text());if(!data||typeof data!=="object"||Array.isArray(data)||!Array.isArray(data.transactions))throw Error("Estructura de copia no válida");if(data.transactions.length>50000)throw Error("La copia contiene demasiados movimientos");if(!data.transactions.every(validTransaction))throw Error("Hay movimientos con datos inválidos");const validAmounts=o=>o&&typeof o==="object"&&!Array.isArray(o)&&Object.values(o).every(v=>Number.isFinite(Number(v))&&Number(v)>=0);if(data.budgets!==undefined&&!validAmounts(data.budgets))throw Error("Presupuestos inválidos");if(data.categoryBudgets!==undefined&&(!data.categoryBudgets||typeof data.categoryBudgets!=="object"||Array.isArray(data.categoryBudgets)))throw Error("Límites por categoría inválidos");if(data.goals!==undefined&&(!Array.isArray(data.goals)||data.goals.some(g=>!g||typeof g.name!=="string"||!Number.isFinite(Number(g.target))||Number(g.target)<=0||!Number.isFinite(Number(g.saved??0))||Number(g.saved??0)<0)))throw Error("Metas inválidas");const ids=new Set();for(const tx of data.transactions){if(tx.id&&ids.has(String(tx.id)))throw Error("Identificadores de movimientos duplicados");if(tx.id)ids.add(String(tx.id))}if(!confirm(`Se importarán ${data.transactions.length} movimientos y se reemplazarán los datos actuales de este teléfono. ¿Continuar?`))return;state={transactions:data.transactions.map(normalizeTransaction),budgets:data.budgets||{},categoryBudgets:data.categoryBudgets||{},goals:Array.isArray(data.goals)?data.goals.map(g=>({id:String(g.id||makeId()),name:g.name.slice(0,50),target:Number(g.target),saved:Math.max(0,Number(g.saved)||0)})):[]};saveState();render();showToast("Copia restaurada correctamente")}catch(err){alert("No se pudo importar: "+(err.message||"archivo no válido"))}finally{e.target.value=""}
 };
 $("clearData").onclick=()=>{if(confirm("Esto eliminará todos tus movimientos y presupuestos de este teléfono. ¿Ya exportaste una copia?")){state=emptyState();saveState();render();$("settingsDialog").close();showToast("Datos eliminados")}};
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
