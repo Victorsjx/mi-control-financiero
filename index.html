@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -66,7 +66,7 @@
       <div class="modal-head"><div><div class="eyebrow" id="formEyebrow">NUEVO MOVIMIENTO</div><h2 id="formTitle">Añadir gasto</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
       <input type="hidden" id="transactionType" value="expense"><input type="hidden" id="transactionId">
       <label for="amount">Monto (CLP)</label><input id="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 15000" required>
-      <label id="categoryLabel" for="category">Categoría</label><div id="expenseCategoryPicker" class="category-picker" role="group" aria-label="Seleccionar categoría de gasto"></div><select id="category"></select>
+      <label id="categoryLabel" for="category">Categoría</label><div id="expenseCategoryPicker" class="category-picker" role="group" aria-label="Seleccionar categoría de gasto"></div><div id="incomeCategoryPicker" class="category-picker income-category-picker" role="group" aria-label="Seleccionar categoría de ingreso" style="display:none"></div><select id="category"></select>
       <label for="description">Descripción (opcional)</label><input id="description" type="text" maxlength="70" placeholder="Ej. Supermercado, locomoción...">
       <label for="date">Fecha</label><input id="date" type="date" required>
       <button class="submit-btn" type="submit" id="saveTransaction">Guardar movimiento</button>
@@ -96,6 +96,6 @@
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>
