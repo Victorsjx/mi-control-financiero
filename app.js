@@ -233,13 +233,13 @@ $("scanReceipt").onclick=async()=>{
   const form=new FormData();form.append("file",file,file.name);form.append("cf-turnstile-response",receiptTurnstileToken);
   const response=await fetch(RECEIPT_WORKER_URL,{method:"POST",body:form});const data=await response.json();
   if(!response.ok)throw new Error(data.error||"No se pudo analizar la boleta.");
-  if(typeof data.total!=="number"||!Number.isFinite(data.total)||data.total<=0)throw new Error("No se detectó un monto válido. Intenta con una foto más nítida.");
-  $("receiptMerchant").value=data.merchant||"Compra";$("receiptTotal").value=Math.round(data.total);
+  const validTotal=typeof data.total==="number"&&Number.isFinite(data.total)&&data.total>0;
+  $("receiptMerchant").value=data.merchant||"Compra / ticket";$("receiptTotal").value=validTotal?Math.round(data.total):"";
   const detectedDate=/^\d{4}-\d{2}-\d{2}$/.test(data.date||"")?data.date:"";$("receiptDate").value=detectedDate;$("receiptCategory").value="Otros";
   const confidence=typeof data.confidence==="number"?Math.round(data.confidence*100):null;
-  $("receiptConfidence").textContent=(data.validatedTotal?"Total validado por Tabscanner.":confidence!==null?"Confianza de lectura del total: "+confidence+"%. Revisa el monto.":"Revisa cuidadosamente el monto detectado.")+(!detectedDate?" No se detectó una fecha válida. Ingresa manualmente la fecha de la boleta.":"")+(data.duplicate?" La imagen ya se había procesado anteriormente.":"");
+  $("receiptConfidence").textContent=(!validTotal?"No pudimos reconocer el monto automáticamente. Escríbelo manualmente mirando tu comprobante.":data.validatedTotal?"Total validado por Tabscanner.":confidence!==null?"Confianza de lectura del total: "+confidence+"%. Revisa el monto.":"Revisa cuidadosamente el monto detectado.")+(!detectedDate?" Tampoco se detectó una fecha válida: ingrésala manualmente.":"")+(data.duplicate?" La imagen ya se había procesado anteriormente.":"");
   $("receiptUploadStage").hidden=true;$("receiptReviewForm").hidden=false;
- }catch(error){
+  if(!validTotal){$("receiptTotal").focus();$("receiptStatus").textContent="Lectura parcial: completa el monto y la fecha antes de guardar."}}catch(error){
   $("receiptStatus").textContent=error.message||"Ocurrió un error al leer la boleta.";receiptTurnstileToken="";
   if(window.turnstile&&receiptWidgetId!==null){try{window.turnstile.reset(receiptWidgetId)}catch{}}
  }finally{button.textContent="Analizar boleta";button.disabled=!(file&&receiptTurnstileToken)}
