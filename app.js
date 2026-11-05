@@ -379,18 +379,7 @@ document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>switchTab(b.data
 $("showAll").onclick=()=>switchTab("history");
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 render();
-const welcomeMessages=[
- "¡Hola, jefe! 👑",
- "¡Bienvenido de vuelta, lord! 😎",
- "¡Qué bueno verte, comandante! 🚀",
- "¡A sus órdenes, patrón! 🫡",
- "¡Hola, crack! Vamos a poner esas finanzas en orden 💸",
- "¡El jefe volvió! Que manden los números 📊",
- "¡Bienvenido, leyenda! ✨",
- "¡Qué pasa, jefe supremo! 👑"
-];
-$("welcomeGreeting").textContent=welcomeMessages[Math.floor(Math.random()*welcomeMessages.length)];
-$("welcomeGreeting").setAttribute("data-ready","true");
+
 
 
 document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEach(button=>{
