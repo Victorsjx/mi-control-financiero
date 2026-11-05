@@ -1,7 +1,5 @@
 {
   "appId": "cl.victorsjx.mifinanzas",
   "appName": "Mi Finanzas",
-  "webDir": "www",
-  "bundledWebRuntime": false,
-  "backgroundColor": "#101827"
+  "webDir": "www"
 }
