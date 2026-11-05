@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=11">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -27,7 +27,7 @@
           <div><span class="stat-dot expense-dot"></span><span class="muted-label">Gastos</span><strong id="expenseTotal">$0</strong></div>
         </div>
         <div class="progress-track"><div id="spendProgress" class="progress-fill"></div></div>
-        <div class="progress-caption"><span id="spentPercent">0% del presupuesto usado</span><span id="budgetCaption">Define tu presupuesto</span></div>
+        <div class="progress-caption"><span id="spentPercent">0% del sueldo inicial utilizado</span><span id="budgetCaption">Ingresa tu sueldo inicial</span></div>
       </section>
       <section class="quick-actions">
         <button class="action-btn primary" id="addExpense"><span>−</span> Registrar gasto</button>
@@ -42,7 +42,7 @@
           <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article><article class="metric-card"><div class="metric-icon teal">%</div><div class="muted-label">Tasa de ahorro</div><strong id="savingRate">0%</strong><small id="savingRateHint">Ahorro sobre ingresos</small></article><article class="metric-card"><div class="metric-icon blue">◷</div><div class="muted-label">Disponible diario</div><strong id="dailyAvailable">$0</strong><small id="dailyAvailableHint">Según tu presupuesto</small></article>
         </div>
       </section>
-      <section class="section"><div class="section-heading"><div><div class="eyebrow">CONTROL INTELIGENTE</div><h2>Presupuestos por categoría</h2></div></div><div id="smartInsights" class="insight-card"></div><div id="dashboardCategoryBudgets" class="dashboard-budgets"></div></section>
+      <section class="section"><div class="section-heading"><div><div class="eyebrow">CONTROL INTELIGENTE</div><h2>Límites de gasto por categoría</h2></div></div><div id="smartInsights" class="insight-card"></div><div id="dashboardCategoryBudgets" class="dashboard-budgets"></div></section>
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">DISTRIBUCIÓN</div><h2>¿En qué gastas?</h2></div></div>
         <div class="chart-card"><div class="donut-wrap"><div class="donut" id="donut"><div><strong id="donutTotal">$0</strong><span>GASTOS</span></div></div></div><div class="legend" id="categoryLegend"><div class="empty-state">Tus categorías aparecerán aquí.</div></div></div>
@@ -60,7 +60,7 @@
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button>
       <button class="nav-item" data-tab="analytics"><span>▥</span>Estadísticas</button><button class="nav-item" data-tab="history"><span>▤</span>Historial</button>
-      <button class="nav-item" data-tab="budget"><span>◷</span>Presupuesto</button>
+      <button class="nav-item" data-tab="budget"><span>◷</span>Sueldo</button>
     </nav>
   </div>
   <dialog id="transactionDialog" class="modal">
@@ -84,12 +84,12 @@
     <button class="outline-btn" id="exportCsv">Exportar historial a CSV</button>
   </dialog>
   <dialog id="budgetDialog" class="modal">
-    <div class="modal-head"><div><div class="eyebrow">PLANIFICA TU MES</div><h2>Presupuesto mensual</h2></div><button class="close-btn" id="closeBudget">×</button></div>
-    <p class="modal-copy">Define cuánto puedes gastar durante el mes seleccionado.</p>
-    <label for="budgetAmount">Presupuesto mensual (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 300000">
+    <div class="modal-head"><div><div class="eyebrow">DINERO DISPONIBLE AL INICIO</div><h2>Sueldo inicial del mes</h2></div><button class="close-btn" id="closeBudget">×</button></div>
+    <p class="modal-copy">Ingresa manualmente el sueldo y dinero principal con el que comienzas este mes.</p>
+    <label for="budgetAmount">Sueldo inicial / dinero disponible (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 305000">
     <div id="budgetStatus" class="budget-status"></div>
-    <div class="budget-category-heading"><strong>Límites por categoría</strong><span>Opcional</span></div>
-    <p class="modal-copy">Define límites individuales para controlar mejor cada tipo de gasto.</p>
+    <div class="budget-category-heading"><strong>Límites de gasto por categoría</strong><span>Opcional</span></div>
+    <p class="modal-copy">Opcional: establece cuánto quieres gastar como máximo en cada categoría.</p>
     <div id="categoryBudgetFields" class="category-budget-fields"></div>
     <button class="submit-btn" id="saveBudget">Guardar presupuesto</button>
   </dialog>
@@ -102,6 +102,6 @@
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
