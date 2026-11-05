@@ -7,109 +7,95 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Mi Finanzas">
+  <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="styles.css">
-  <title>Mi Control Financiero</title>
+  <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">₱</div>
-        <div><div class="eyebrow">TU DINERO, BAJO CONTROL</div><h1>Mi Finanzas</h1></div>
-      </div>
+      <div class="brand"><div class="brand-mark">₱</div><div><div class="eyebrow">TU DINERO, BAJO CONTROL</div><h1>Mi Finanzas</h1></div></div>
       <button class="icon-btn" id="settingsBtn" aria-label="Configuración">⚙</button>
     </header>
-
     <main>
       <section class="hero-card">
-        <div class="hero-top">
-          <div><div class="muted-label">DISPONIBLE ESTE MES</div><div class="balance" id="balance">$0</div></div>
-          <div class="month-chip" id="monthLabel">Este mes</div>
-        </div>
+        <div class="hero-top"><div><div class="muted-label">BALANCE DEL MES</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
         <div class="hero-stats">
           <div><span class="stat-dot income-dot"></span><span class="muted-label">Ingresos</span><strong id="incomeTotal">$0</strong></div>
           <div><span class="stat-dot expense-dot"></span><span class="muted-label">Gastos</span><strong id="expenseTotal">$0</strong></div>
         </div>
         <div class="progress-track"><div id="spendProgress" class="progress-fill"></div></div>
-        <div class="progress-caption"><span id="spentPercent">0% gastado</span><span id="budgetCaption">Registra tus movimientos</span></div>
+        <div class="progress-caption"><span id="spentPercent">0% del presupuesto usado</span><span id="budgetCaption">Define tu presupuesto</span></div>
       </section>
-
       <section class="quick-actions">
         <button class="action-btn primary" id="addExpense"><span>−</span> Añadir gasto</button>
         <button class="action-btn secondary" id="addIncome"><span>＋</span> Añadir ingreso</button>
       </section>
-
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
         <div class="metric-grid">
           <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Según tu ritmo actual</small></article>
           <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Ahorro del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
+          <article class="metric-card"><div class="metric-icon blue">▤</div><div class="muted-label">Movimientos</div><strong id="movementCount">0</strong><small>Registros del mes</small></article>
+          <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article>
         </div>
       </section>
-
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">DISTRIBUCIÓN</div><h2>¿En qué gastas?</h2></div></div>
-        <div class="chart-card">
-          <div class="donut-wrap"><div class="donut" id="donut"><div><strong id="donutTotal">$0</strong><span>GASTOS</span></div></div></div>
-          <div class="legend" id="categoryLegend"><div class="empty-state">Tus categorías aparecerán aquí.</div></div>
-        </div>
+        <div class="chart-card"><div class="donut-wrap"><div class="donut" id="donut"><div><strong id="donutTotal">$0</strong><span>GASTOS</span></div></div></div><div class="legend" id="categoryLegend"><div class="empty-state">Tus categorías aparecerán aquí.</div></div></div>
       </section>
-
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">ACTIVIDAD</div><h2>Movimientos recientes</h2></div><button class="text-btn" id="showAll">Ver historial</button></div>
-        <div class="transactions-card" id="recentList"><div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div></div>
+        <div class="transactions-card" id="recentList"><div class="empty-state">Añade tu primer movimiento.</div></div>
       </section>
-
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">COMPARACIÓN</div><h2>Mes contra mes</h2></div></div>
-        <div class="comparison-card" id="comparison"><div class="empty-state">Registra movimientos en distintos meses para comparar.</div></div>
+        <div class="comparison-card" id="comparison"><div class="empty-state">Aún no hay datos para comparar.</div></div>
       </section>
     </main>
-
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button>
       <button class="nav-item" data-tab="history"><span>▤</span>Historial</button>
-      <button class="nav-item" data-tab="budget"><span>◷</span>Presupuestos</button>
+      <button class="nav-item" data-tab="budget"><span>◷</span>Presupuesto</button>
     </nav>
   </div>
-
   <dialog id="transactionDialog" class="modal">
-    <form id="transactionForm" method="dialog">
+    <form id="transactionForm">
       <div class="modal-head"><div><div class="eyebrow" id="formEyebrow">NUEVO MOVIMIENTO</div><h2 id="formTitle">Añadir gasto</h2></div><button type="button" class="close-btn" id="closeDialog">×</button></div>
-      <input type="hidden" id="transactionType" value="expense">
+      <input type="hidden" id="transactionType" value="expense"><input type="hidden" id="transactionId">
       <label for="amount">Monto (CLP)</label><input id="amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 15000" required>
       <label for="category">Categoría</label><select id="category"></select>
-      <label for="description">Descripción</label><input id="description" type="text" maxlength="70" placeholder="Ej. Supermercado, locomoción...">
+      <label for="description">Descripción (opcional)</label><input id="description" type="text" maxlength="70" placeholder="Ej. Supermercado, locomoción...">
       <label for="date">Fecha</label><input id="date" type="date" required>
-      <button class="submit-btn" type="submit">Guardar movimiento</button>
+      <button class="submit-btn" type="submit" id="saveTransaction">Guardar movimiento</button>
     </form>
   </dialog>
-
-  <dialog id="historyDialog" class="modal">
-    <div class="modal-head"><div><div class="eyebrow">TODOS TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory">×</button></div>
-    <div class="history-tools"><select id="historyMonth"></select><select id="historyType"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select></div>
+  <dialog id="historyDialog" class="modal wide-modal">
+    <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory">×</button></div>
+    <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select></div>
+    <input class="search-input" id="historySearch" type="search" placeholder="Buscar por descripción o categoría...">
+    <div class="history-summary" id="historySummary"></div>
     <div id="fullHistory" class="transactions-card"></div>
+    <button class="outline-btn" id="exportCsv">Exportar historial a CSV</button>
   </dialog>
-
   <dialog id="budgetDialog" class="modal">
     <div class="modal-head"><div><div class="eyebrow">PLANIFICA TU MES</div><h2>Presupuesto mensual</h2></div><button class="close-btn" id="closeBudget">×</button></div>
-    <p class="modal-copy">Define un límite total de gastos para el mes seleccionado.</p>
-    <label for="budgetAmount">Presupuesto mensual (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" placeholder="Ej. 300000">
-    <button class="submit-btn" id="saveBudget">Guardar presupuesto</button>
+    <p class="modal-copy">Define cuánto puedes gastar durante el mes seleccionado.</p>
+    <label for="budgetAmount">Presupuesto mensual (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 300000">
     <div id="budgetStatus" class="budget-status"></div>
+    <button class="submit-btn" id="saveBudget">Guardar presupuesto</button>
   </dialog>
-
   <dialog id="settingsDialog" class="modal">
     <div class="modal-head"><div><div class="eyebrow">PREFERENCIAS</div><h2>Configuración</h2></div><button class="close-btn" id="closeSettings">×</button></div>
-    <p class="modal-copy">Tus datos se guardan localmente en este navegador. Exporta una copia de seguridad periódicamente.</p>
-    <button class="submit-btn" id="exportData">Exportar mis datos (.json)</button>
-    <label class="file-label">Importar copia de seguridad<input type="file" id="importData" accept="application/json"></label>
+    <div class="settings-note"><strong>Guardado en este teléfono</strong><p>Por ahora tus datos permanecen en el almacenamiento local de este navegador. La sincronización entre teléfonos requiere configurar una base de datos segura en la nube.</p></div>
+    <button class="submit-btn" id="exportData">Crear copia de seguridad (.json)</button>
+    <label class="file-label">Restaurar copia de seguridad<input type="file" id="importData" accept="application/json"></label>
     <button class="danger-btn" id="clearData">Eliminar todos mis movimientos</button>
-    <p class="tiny-note">La app no envía tus movimientos a ningún servidor. Si borras los datos del navegador, puedes perderlos si no tienes una copia.</p>
+    <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
-  <div id="toast" class="toast" role="status"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
 </html>
