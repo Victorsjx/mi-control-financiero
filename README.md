@@ -37,6 +37,18 @@ Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en
 ## Publicar
 El repositorio se publica mediante GitHub Pages. En Settings → Pages, selecciona Deploy from a branch y la rama `main` (o la rama que corresponda) con la carpeta `/(root)`.
 
+## Aplicación Android (APK)
+
+El proyecto incluye una configuración inicial de Capacitor 8 para generar una aplicación Android a partir de los mismos archivos web, sin reemplazar GitHub Pages.
+
+- Configuración: `capacitor.config.json`.
+- Dependencias: `package.json`.
+- Preparación de recursos: `npm run build:web`.
+- Compilación automática: GitHub Actions → “Build Mi Finanzas Android APK”.
+- Guía paso a paso, requisitos y migración de datos: `docs/ANDROID_APK.md`.
+
+El primer APK será de depuración y deberá probarse antes de distribuirlo. La importación de una copia JSON será necesaria para trasladar los datos desde el navegador al almacenamiento aislado de la app. El lector OCR requiere adaptar y validar Turnstile/CORS para el origen local de Capacitor.
+
 ## Instalar en Android
 1. Abre la dirección HTTPS publicada en Chrome.
 2. Abre el menú ⋮ y selecciona Instalar aplicación o Añadir a pantalla de inicio.
