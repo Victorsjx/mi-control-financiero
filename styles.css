@@ -217,3 +217,15 @@ button,.action-btn,.nav-item{transition:transform 160ms ease,background-color 18
 button,.action-btn,.nav-item{transition-duration:240ms!important}
 .progress-fill{transition-duration:650ms!important}
 .category-option{transition-duration:260ms!important}
+
+/* v19 · transición continua: salida e ingreso coordinados */
+[data-view][hidden]{display:none!important}
+[data-view]:not([hidden]){will-change:transform,opacity}
+.screen-enter{animation:screenSlideIn 520ms cubic-bezier(.22,.72,.22,1) both!important}
+.screen-exit{animation:screenSlideOut 520ms cubic-bezier(.22,.72,.22,1) both!important;pointer-events:none}
+@keyframes screenSlideIn{from{opacity:0;transform:translate3d(34px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes screenSlideOut{from{opacity:1;transform:translate3d(0,0,0)}to{opacity:0;transform:translate3d(-26px,0,0)}}
+@media(prefers-reduced-motion:reduce){
+ .screen-enter,.screen-exit{animation:none!important}
+ [data-view]:not([hidden]){will-change:auto}
+}
