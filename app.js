@@ -71,7 +71,7 @@ function renderDonut(key,total){
 }
 function txHTML(x,editable=false){
   const sign=x.type==="income"?"+":"−";
-  return `<div class="transaction"><div class="tx-icon">${categoryIcons[x.category]||"📌"}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div>${editable?`<button class="mini-action edit-tx" data-id="${escapeHTML(x.id)}">Editar</button>`:""}</div></div>`;
+  return `<div class="transaction"><div class="tx-icon">${categoryIcons[x.category]||"📌"}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
 }
 function renderRecent(key){const a=transactionsFor(key).sort((x,y)=>y.date.localeCompare(x.date)).slice(0,5);$("recentList").innerHTML=a.length?a.map(x=>txHTML(x)).join(""):'<div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div>'}
 function renderComparison(key){
