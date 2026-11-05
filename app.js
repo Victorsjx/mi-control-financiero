@@ -1,10 +1,38 @@
 const $ = id => document.getElementById(id);
+
+const ICON_PATHS={
+ "house":'<path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9"/><path d="M9 21v-7h6v7"/>',
+ "chart-no-axes-combined":'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-5 5"/>',
+ "plus":'<path d="M12 5v14"/><path d="M5 12h14"/>',
+ "wallet":'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/><path d="M16 14h.01"/>',
+ "receipt-text":'<path d="M4 2v20l4-2 4 2 4-2 4 2V2l-4 2-4-2-4 2-4-2Z"/><path d="M8 9h8M8 13h6"/>',
+ "settings":'<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z"/>',
+ "circle-minus":'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+ "circle-plus":'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+ "chart-line":'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-5 5"/>',
+ "arrow-left-right":'<path d="M17 3 21 7l-4 4"/><path d="M3 7h18"/><path d="m7 21-4-4 4-4"/><path d="M21 17H3"/>',
+ "calendar-days":'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/>',
+ "piggy-bank":'<path d="M19 5c-2-2-5-2-8-1-3 1-5 3-6 6l-2 1v4l3 1 2 3h8l2-3 2-1V9l-2-1Z"/><path d="M14 8h.01M3 12H1M17 4l1-2"/>',
+ "clock":'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ "arrow-left":'<path d="m12 19-7-7 7-7M5 12h14"/>',
+ "x":'<path d="m18 6-12 12M6 6l12 12"/>',
+ "bus-front":'<path d="M5 17h14V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v12ZM5 10h14M8 21v-4M16 21v-4"/><path d="M8 13h.01M16 13h.01"/>',
+ "utensils":'<path d="m3 2 7 7M4 3l-2 2 7 7M14 2l-3 10 3 3 3-3-3-10ZM14 15l7 7"/>',
+ "ticket":'<path d="M2 9a3 3 0 0 0 0 6v5h20v-5a3 3 0 0 1 0-6V4H2v5Z"/><path d="M13 5v2M13 11v2M13 17v2"/>',
+ "shapes":'<path d="M8 3H3v5h5V3ZM21 3h-8v8h8V3ZM3 13h8v8H3v-8ZM17 15v6M14 18h6"/>',
+ "gift":'<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M2 8h20V5H2v3ZM12 5c-4 0-5-4-2-4 2 0 2 2 2 4ZM12 5c4 0 5-4 2-4-2 0-2 2-2 4Z"/>',
+ "store":'<path d="M3 10v10h18V10M2 10l2-7h16l2 7"/><path d="M2 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0M9 20v-6h6v6"/>',
+ "undo-2":'<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-2"/>',
+ "circle-dollar-sign":'<circle cx="12" cy="12" r="9"/><path d="M16 8H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H8M12 5v14"/>'
+};
+function iconSVG(name){const paths=ICON_PATHS[name]||ICON_PATHS.shapes;return '<svg class="ui-icon" data-icon="'+name+'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">'+paths+'</svg>'}
+
 const STORAGE_KEY = "mi-control-financiero-v1";
 const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
-const expenseCategoryOptions = [{name:"Transporte",icon:"↗"},{name:"Comida",icon:"◉"},{name:"Salidas",icon:"✦"},{name:"Otros",icon:"···"}];
+const expenseCategoryOptions = [{name:"Transporte",icon:"bus-front"},{name:"Comida",icon:"utensils"},{name:"Salidas",icon:"ticket"},{name:"Otros",icon:"shapes"}];
 const incomeCategories = ["Bonos","Ventas","Devoluciones","Otros ingresos"];
-const incomeCategoryOptions = [{name:"Bonos",icon:"✧"},{name:"Ventas",icon:"↗"},{name:"Devoluciones",icon:"↩"},{name:"Otros ingresos",icon:"···"}];
-const categoryIcons = {"Comida":"◉","Alimentación":"◉","Transporte":"↗","Salidas":"✦","Entretenimiento":"✦","Otros":"···","Sueldo":"＋","Bonos":"✧","Ventas":"↗","Devoluciones":"↩","Otros ingresos":"＋"};
+const incomeCategoryOptions = [{name:"Bonos",icon:"gift"},{name:"Ventas",icon:"store"},{name:"Devoluciones",icon:"undo-2"},{name:"Otros ingresos",icon:"circle-dollar-sign"}];
+const categoryIcons = {"Comida":"utensils","Alimentación":"utensils","Transporte":"bus-front","Salidas":"ticket","Entretenimiento":"ticket","Otros":"shapes","Sueldo":"wallet","Bonos":"gift","Ventas":"store","Devoluciones":"undo-2","Otros ingresos":"circle-dollar-sign"};
 const palette = ["#7667e8","#45b9c2","#6f9ce8","#f1ad48","#e97891","#65c99a","#a48be8","#f18c62","#72b9d9","#d28fc4","#8fc77d","#e0c46a"];
 let state = loadState();
 let selectedMonth = monthKey(new Date());
@@ -110,7 +138,7 @@ function renderDonut(key,total){
 }
 function txHTML(x,editable=false){
   const sign=x.type==="income"?"+":"−";
-  return `<div class="transaction"><div class="tx-icon">${categoryIcons[x.category]||"•"}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
+  return `<div class="transaction"><div class="tx-icon">${iconSVG(categoryIcons[x.category]||"shapes")}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
 }
 function renderRecent(key){const a=transactionsFor(key).sort((x,y)=>y.date.localeCompare(x.date)).slice(0,5);$("recentList").innerHTML=a.length?a.map(x=>txHTML(x)).join(""):'<div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div>'}
 function renderComparison(key){
@@ -119,7 +147,7 @@ function renderComparison(key){
   const msg=diff===0?"Mismo nivel de gastos":diff<0?`Gastaste ${money(Math.abs(diff))} menos que el mes anterior`:`Gastaste ${money(diff)} más que el mes anterior`;
   $("comparison").innerHTML=`<div class="compare-row"><span>${d.toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill" style="width:${cur.expense/max*100}%"></div></div><strong>${money(cur.expense)}</strong></div><div class="compare-row"><span>${monthDate(prev).toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill old-fill" style="width:${old.expense/max*100}%"></div></div><strong>${money(old.expense)}</strong></div><div class="budget-status">${msg}</div>`;
 }
-function renderCategoryPicker(type,selected){const picker=$(type==="expense"?"expenseCategoryPicker":"incomeCategoryPicker");const options=type==="expense"?expenseCategoryOptions:[...incomeCategoryOptions];if(type==="income"&&selected==="Sueldo")options.unshift({name:"Sueldo",icon:"＋"});picker.innerHTML=options.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");picker.querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;picker.querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
+function renderCategoryPicker(type,selected){const picker=$(type==="expense"?"expenseCategoryPicker":"incomeCategoryPicker");const options=type==="expense"?expenseCategoryOptions:[...incomeCategoryOptions];if(type==="income"&&selected==="Sueldo")options.unshift({name:"Sueldo",icon:"＋"});picker.innerHTML=options.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${iconSVG(option.icon)}</span><span>${option.name}</span></button>`).join("");picker.querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;picker.querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
 function openTransaction(type,tx=null){
   $("transactionType").value=type;$("transactionId").value=tx?.id||"";
   $("formTitle").textContent=tx?"Editar movimiento":type==="expense"?"Añadir gasto":"Añadir ingreso";
