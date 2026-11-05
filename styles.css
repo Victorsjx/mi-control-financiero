@@ -298,3 +298,7 @@ dialog{max-height:min(88dvh,760px);overscroll-behavior:contain}
 .assistant-settings label{display:block;margin:12px 0 6px;color:#b0bfd1;font-size:11px;font-weight:750}
 .assistant-settings select{display:block;width:100%;min-height:44px;padding:10px 12px;border:1px solid #455873;border-radius:11px;background:#111d2d;color:#edf2fa;font:inherit;font-size:13px}
 .assistant-settings p{margin:12px 0 0;color:#a7b7ca;font-size:11px;line-height:1.6}
+
+.assistant-save-status{font-size:11px;line-height:1.5;color:#aebed1;margin:9px 0 0}
+.assistant-save-status[data-state="saved"]{color:#8fe0b7}
+.assistant-save-status[data-state="error"]{color:#ffb2b2}
