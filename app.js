@@ -1,8 +1,9 @@
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = "mi-control-financiero-v1";
-const expenseCategories = ["Alimentación","Transporte","Vivienda","Cuentas y servicios","Salud","Compras","Entretenimiento","Educación","Deudas","Mascotas","Regalos","Otros"];
+const expenseCategories = ["Transporte","Comida","Salidas","Otros"];
+const expenseCategoryOptions = [{name:"Transporte",icon:"🚌"},{name:"Comida",icon:"🍔"},{name:"Salidas",icon:"🎉"},{name:"Otros",icon:"📦"}];
 const incomeCategories = ["Sueldo","Bonos","Ventas","Devoluciones","Otros ingresos"];
-const categoryIcons = {"Alimentación":"🍔","Transporte":"🚌","Vivienda":"🏠","Cuentas y servicios":"💡","Salud":"💊","Compras":"🛍️","Entretenimiento":"🎮","Educación":"📚","Deudas":"💳","Mascotas":"🐾","Regalos":"🎁","Otros":"📦","Sueldo":"💼","Bonos":"✨","Ventas":"🪙","Devoluciones":"↩️","Otros ingresos":"💰"};
+const categoryIcons = {"Comida":"🍔","Alimentación":"🍔","Transporte":"🚌","Salidas":"🎉","Entretenimiento":"🎉","Otros":"📦","Sueldo":"💼","Bonos":"✨","Ventas":"🪙","Devoluciones":"↩️","Otros ingresos":"💰"};
 const palette = ["#5bd6a2","#a78bfa","#76a9fa","#ffb86b","#ff7887","#5bd6c5","#e6cf6b","#d58cf2","#8fa8bc","#d28f7c","#75c8e8","#b6d66c"];
 let state = loadState();
 let selectedMonth = monthKey(new Date());
@@ -17,7 +18,8 @@ function loadState(){
   }catch{return emptyState()}
 }
 function validTransaction(t){return t&&typeof t==="object"&&(t.type==="income"||t.type==="expense")&&Number.isFinite(Number(t.amount))&&Number(t.amount)>0&&/^\d{4}-\d{2}-\d{2}$/.test(t.date)&&typeof t.category==="string"}
-function normalizeTransaction(t){return {id:String(t.id||makeId()),type:t.type,amount:Math.round(Number(t.amount)),category:t.category,description:String(t.description||"").slice(0,70),date:t.date}}
+function normalizeExpenseCategory(category){if(category==="Transporte")return "Transporte";if(["Alimentación","Comida"].includes(category))return "Comida";if(["Entretenimiento","Salidas","Regalos"].includes(category))return "Salidas";return "Otros"}
+function normalizeTransaction(t){return {id:String(t.id||makeId()),type:t.type,amount:Math.round(Number(t.amount)),category:t.type==="expense"?normalizeExpenseCategory(t.category):t.category,description:String(t.description||"").slice(0,70),date:t.date}}
 function makeId(){return crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(16).slice(2)}
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
@@ -80,13 +82,20 @@ function renderComparison(key){
   const msg=diff===0?"Mismo nivel de gastos":diff<0?`Gastaste ${money(Math.abs(diff))} menos que el mes anterior`:`Gastaste ${money(diff)} más que el mes anterior`;
   $("comparison").innerHTML=`<div class="compare-row"><span>${d.toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill" style="width:${cur.expense/max*100}%"></div></div><strong>${money(cur.expense)}</strong></div><div class="compare-row"><span>${monthDate(prev).toLocaleDateString("es-CL",{month:"short"})}</span><div class="compare-track"><div class="compare-fill old-fill" style="width:${old.expense/max*100}%"></div></div><strong>${money(old.expense)}</strong></div><div class="budget-status">${msg}</div>`;
 }
+function renderExpenseCategoryPicker(selected){$("expenseCategoryPicker").innerHTML=expenseCategoryOptions.map(option=>`<button type="button" class="category-option${option.name===selected?" selected":""}" data-category="${option.name}" aria-pressed="${option.name===selected}"><span class="category-option-icon">${option.icon}</span><span>${option.name}</span></button>`).join("");$("expenseCategoryPicker").querySelectorAll(".category-option").forEach(button=>button.onclick=()=>{$("category").value=button.dataset.category;$("expenseCategoryPicker").querySelectorAll(".category-option").forEach(item=>{const active=item===button;item.classList.toggle("selected",active);item.setAttribute("aria-pressed",String(active))})})}
 function openTransaction(type,tx=null){
   $("transactionType").value=type;$("transactionId").value=tx?.id||"";
   $("formTitle").textContent=tx?"Editar movimiento":type==="expense"?"Añadir gasto":"Añadir ingreso";
   $("formEyebrow").textContent=tx?"EDITAR REGISTRO":type==="expense"?"REGISTRO DE GASTO":"REGISTRO DE INGRESO";
   const cats=type==="expense"?expenseCategories:incomeCategories;
   $("category").innerHTML=cats.map(c=>`<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
-  $("category").value=tx?.category||cats[0];$("amount").value=tx?.amount||"";$("description").value=tx?.description||"";
+  const initialCategory=tx?(type==="expense"?normalizeExpenseCategory(tx.category):tx.category):cats[0];
+  $("category").value=initialCategory;
+  $("expenseCategoryPicker").style.display=type==="expense"?"grid":"none";
+  $("category").style.display=type==="income"?"block":"none";
+  $("categoryLabel").textContent=type==="expense"?"¿En qué gastaste?":"Categoría";
+  if(type==="expense")renderExpenseCategoryPicker(initialCategory);
+  $("amount").value=tx?.amount||"";$("description").value=tx?.description||"";
   $("date").value=tx?.date||new Date().toISOString().slice(0,10);
   $("saveTransaction").textContent=tx?"Guardar cambios":"Guardar movimiento";
   $("transactionDialog").showModal();setTimeout(()=>$("amount").focus(),100);
