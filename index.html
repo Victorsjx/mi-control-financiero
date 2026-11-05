@@ -16,12 +16,12 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand"><div class="brand-mark">₱</div><div><div class="eyebrow">TU DINERO, BAJO CONTROL</div><h1>Mi Finanzas</h1></div></div>
-      <button class="icon-btn" id="settingsBtn" aria-label="Configuración">⚙</button>
+      <div class="brand"><div class="brand-mark">M</div><div><div class="eyebrow">CONTROL PERSONAL</div><h1>Mi Finanzas</h1></div></div>
+      <button class="icon-btn" id="settingsBtn" aria-label="Configuración"><span aria-hidden="true">•••</span></button>
     </header>
     <main>
       <section class="hero-card">
-        <div class="hero-top"><div><div class="muted-label">BALANCE DEL MES</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
+        <div class="hero-top"><div><div class="muted-label">BALANCE DISPONIBLE</div><div class="balance" id="balance">$0</div></div><div class="month-chip" id="monthLabel">Este mes</div></div>
         <div class="hero-stats">
           <div><span class="stat-dot income-dot"></span><span class="muted-label">Ingresos</span><strong id="incomeTotal">$0</strong></div>
           <div><span class="stat-dot expense-dot"></span><span class="muted-label">Gastos</span><strong id="expenseTotal">$0</strong></div>
@@ -30,8 +30,8 @@
         <div class="progress-caption"><span id="spentPercent">0% del presupuesto usado</span><span id="budgetCaption">Define tu presupuesto</span></div>
       </section>
       <section class="quick-actions">
-        <button class="action-btn primary" id="addExpense"><span>−</span> Añadir gasto</button>
-        <button class="action-btn secondary" id="addIncome"><span>＋</span> Añadir ingreso</button>
+        <button class="action-btn primary" id="addExpense"><span>−</span> Registrar gasto</button>
+        <button class="action-btn secondary" id="addIncome"><span>＋</span> Registrar ingreso</button>
       </section>
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
