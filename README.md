@@ -2,6 +2,11 @@
 
 Aplicación web progresiva (PWA) para registrar ingresos y gastos manualmente en pesos chilenos.
 
+## Versión 2.3
+- Pulido visual de tipografía, espaciado, tarjetas, formularios y navegación adaptable.
+- Mejoras de accesibilidad: estados de foco visibles y controles deshabilitados más claros.
+- Registro técnico del código, arquitectura, almacenamiento y dependencias en `docs/REGISTRO_TECNICO.md`.
+
 ## Versión 2.2
 - Lector de boletas con OCR mediante Tabscanner y validación anti-bots Cloudflare Turnstile.
 - Revisión manual obligatoria de comercio, monto, fecha y categoría antes de guardar el gasto.
