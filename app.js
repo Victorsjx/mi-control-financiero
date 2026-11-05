@@ -111,7 +111,7 @@ function render(){
   const daysLeft=isCurrent?Math.max(1,daysInMonth-now.getDate()+1):1;
   setAnimatedNumber("dailyAvailable",budget?money(Math.max(0,budget-t.expense)/daysLeft):"—");
   $("dailyAvailableHint").textContent=budget?money(Math.max(0,budget-t.expense))+" del dinero inicial restante":"Ingresa tu sueldo inicial";
-  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderAnalytics();renderGoals();
+  renderDonut(key,t.expense);renderRecent(key);renderComparison(key);renderSmartPanel(key,t,budget,net);renderGoals();
 }
 function localDateInput(d=new Date()){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function renderSmartPanel(key,t,budget,net){
@@ -156,7 +156,7 @@ function txHTML(x,editable=false){
   const sign=x.type==="income"?"+":"−";
   return `<div class="transaction"><div class="tx-icon">${iconSVG(categoryIcons[x.category]||"shapes")}</div><div class="tx-main"><div class="tx-title">${escapeHTML(x.description||x.category)}</div><div class="tx-sub">${escapeHTML(x.category)} · ${dateText(x.date)} · ${x.type==="income"?"Ingreso":"Gasto"}</div></div><div class="tx-side"><div class="tx-amount ${x.type==="income"?"positive":"negative"}">${sign}${money(x.amount)}</div></div></div>`;
 }
-function renderRecent(key){const a=transactionsFor(key).sort((x,y)=>y.date.localeCompare(x.date)).slice(0,5);$("recentList").innerHTML=a.length?a.map(x=>txHTML(x)).join(""):'<div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div>'}
+function renderRecent(key){const a=[...transactionsFor(key)].sort((x,y)=>y.date.localeCompare(x.date)).slice(0,5);$("recentList").innerHTML=a.length?a.map(x=>txHTML(x)).join(""):'<div class="empty-state">Todavía no tienes movimientos. Añade tu primer gasto.</div>'}
 function renderComparison(key){
   const d=monthDate(key),prev=monthKey(new Date(d.getFullYear(),d.getMonth()-1,1)),cur=totals(key),old=totals(prev);
   const max=Math.max(cur.expense,old.expense,1),diff=cur.expense-old.expense;
