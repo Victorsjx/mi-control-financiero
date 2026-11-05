@@ -31,3 +31,9 @@ dialog{border:1px solid #e8e8f2;background:#fff;color:#292b48;border-radius:25px
 .category-budget-row small{font-size:9px;color:#999bb1;font-weight:500}
 .category-budget-row input{width:125px!important;max-width:42%;padding:10px!important;font-size:12px!important}
 @media(max-width:360px){.history-tools{grid-template-columns:1fr}.category-budget-row input{width:110px!important}}
+
+.category-budget-card{padding:9px;background:#fafaff;border:1px solid #ececf5;border-radius:14px}
+.category-budget-card .category-budget-row{padding:2px;border:0;background:transparent}
+.category-budget-track{height:5px;background:#e9eaf4;border-radius:10px;overflow:hidden;margin:8px 3px 1px}
+.category-budget-track span{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#8e80ef,#b5aaff);transition:width .25s}
+.category-budget-track span.over{background:linear-gradient(90deg,#e66b7b,#f3a0aa)}
