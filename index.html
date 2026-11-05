@@ -36,12 +36,13 @@
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">ANÁLISIS</div><h2>Tu mes en números</h2></div><select id="monthSelect" aria-label="Seleccionar mes"></select></div>
         <div class="metric-grid">
-          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de gastos</div><strong id="projection">$0</strong><small id="projectionHint">Según tu ritmo actual</small></article>
+          <article class="metric-card"><div class="metric-icon purple">↗</div><div class="muted-label">Proyección de cierre</div><strong id="projection">$0</strong><small id="projectionHint">Balance estimado al cierre</small></article>
           <article class="metric-card"><div class="metric-icon teal">◎</div><div class="muted-label">Ahorro del mes</div><strong id="saving">$0</strong><small id="savingHint">Ingresos menos gastos</small></article>
           <article class="metric-card"><div class="metric-icon blue">▤</div><div class="muted-label">Movimientos</div><strong id="movementCount">0</strong><small>Registros del mes</small></article>
-          <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article>
+          <article class="metric-card"><div class="metric-icon orange">⌁</div><div class="muted-label">Promedio diario</div><strong id="dailyAverage">$0</strong><small>Gasto por día transcurrido</small></article><article class="metric-card"><div class="metric-icon teal">%</div><div class="muted-label">Tasa de ahorro</div><strong id="savingRate">0%</strong><small id="savingRateHint">Ahorro sobre ingresos</small></article><article class="metric-card"><div class="metric-icon blue">◷</div><div class="muted-label">Disponible diario</div><strong id="dailyAvailable">$0</strong><small id="dailyAvailableHint">Según tu presupuesto</small></article>
         </div>
       </section>
+      <section class="section"><div class="section-heading"><div><div class="eyebrow">CONTROL INTELIGENTE</div><h2>Presupuestos por categoría</h2></div></div><div id="smartInsights" class="insight-card"></div><div id="dashboardCategoryBudgets" class="dashboard-budgets"></div></section>
       <section class="section">
         <div class="section-heading"><div><div class="eyebrow">DISTRIBUCIÓN</div><h2>¿En qué gastas?</h2></div></div>
         <div class="chart-card"><div class="donut-wrap"><div class="donut" id="donut"><div><strong id="donutTotal">$0</strong><span>GASTOS</span></div></div></div><div class="legend" id="categoryLegend"><div class="empty-state">Tus categorías aparecerán aquí.</div></div></div>
@@ -54,10 +55,11 @@
         <div class="section-heading"><div><div class="eyebrow">COMPARACIÓN</div><h2>Mes contra mes</h2></div></div>
         <div class="comparison-card" id="comparison"><div class="empty-state">Aún no hay datos para comparar.</div></div>
       </section>
+    <section class="analytics-screen" id="analyticsScreen" hidden><div class="section-heading"><div><div class="eyebrow">TUS FINANZAS EN EL TIEMPO</div><h2>Análisis financiero</h2></div><span class="analytics-period">Últimos 6 meses</span></div><div class="metric-grid analytics-summary"><article class="metric-card"><div class="muted-label">Ingresos · 6 meses</div><strong id="sixIncome">$0</strong></article><article class="metric-card"><div class="muted-label">Gastos · 6 meses</div><strong id="sixExpense">$0</strong></article><article class="metric-card"><div class="muted-label">Balance · 6 meses</div><strong id="sixBalance">$0</strong></article><article class="metric-card"><div class="muted-label">Ahorro promedio</div><strong id="sixSavingRate">—</strong></article></div><section class="section"><h2>Ingresos y gastos</h2><div id="trendChart" class="analytics-card"></div></section><section class="section"><h2>Balance mensual</h2><div id="balanceChart" class="analytics-card"></div></section><section class="section"><h2>Distribución de gastos</h2><div id="expenseRanking" class="analytics-card"></div></section><section class="section"><h2>Fuentes de ingresos</h2><div id="incomeRanking" class="analytics-card"></div></section><section class="section"><h2>Conclusiones</h2><div id="analyticsInsights" class="insight-card"></div></section></section>
     </main>
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button>
-      <button class="nav-item" data-tab="history"><span>▤</span>Historial</button>
+      <button class="nav-item" data-tab="analytics"><span>▥</span>Estadísticas</button><button class="nav-item" data-tab="history"><span>▤</span>Historial</button>
       <button class="nav-item" data-tab="budget"><span>◷</span>Presupuesto</button>
     </nav>
   </div>
