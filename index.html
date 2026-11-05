@@ -10,7 +10,7 @@
   <meta name="description" content="Control personal de ingresos, gastos, presupuestos y ahorro en pesos chilenos.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=13">
   <title>Mi Control Financiero 2.0</title>
 </head>
 <body>
@@ -55,10 +55,28 @@
         <div class="section-heading"><div><div class="eyebrow">COMPARACIÓN</div><h2>Mes contra mes</h2></div></div>
         <div class="comparison-card" id="comparison"><div class="empty-state">Aún no hay datos para comparar.</div></div>
       </section>
+      <section id="historyScreen" class="screen-page section" data-view="history" hidden>
+    <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory" aria-label="Volver al inicio">←</button></div>
+    <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select><select id="historyCategory" aria-label="Filtrar categoría"><option value="all">Todas las categorías</option></select></div>
+    <div class="history-date-filters"><label>Desde<input id="historyFrom" type="date"></label><label>Hasta<input id="historyTo" type="date"></label></div>
+    <input class="search-input" id="historySearch" type="search" placeholder="Buscar por descripción o categoría...">
+    <div class="history-summary" id="historySummary"></div>
+    <div id="fullHistory" class="transactions-card"></div>
+    <button class="outline-btn" id="exportCsv">Exportar historial a CSV</button>
+  </section>
+      <section id="budgetScreen" class="screen-page section" data-view="budget" hidden>
+    <div class="modal-head"><div><div class="eyebrow">DINERO DISPONIBLE AL INICIO</div><h2>Sueldo inicial del mes</h2></div><button class="close-btn" id="closeBudget" aria-label="Volver al inicio">←</button></div>
+    <p class="modal-copy">Ingresa manualmente el sueldo y dinero principal con el que comienzas este mes.</p>
+    <label for="budgetAmount">Sueldo inicial / dinero disponible (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 305000">
+    <div id="budgetStatus" class="budget-status"></div>
+    <div class="budget-category-heading"><strong>Límites de gasto por categoría</strong><span>Opcional</span></div>
+    <p class="modal-copy">Opcional: establece cuánto quieres gastar como máximo en cada categoría.</p>
+    <div id="categoryBudgetFields" class="category-budget-fields"></div>
+    <button class="submit-btn" id="saveBudget">Guardar sueldo y límites</button>
+  </section>
     <section class="analytics-screen" data-view="analytics" id="analyticsScreen" hidden><div class="section-heading"><div><div class="eyebrow">TUS FINANZAS EN EL TIEMPO</div><h2>Análisis financiero</h2></div><span class="analytics-period">Últimos 6 meses</span></div><div class="metric-grid analytics-summary"><article class="metric-card"><div class="muted-label">Ingresos · 6 meses</div><strong id="sixIncome">$0</strong></article><article class="metric-card"><div class="muted-label">Gastos · 6 meses</div><strong id="sixExpense">$0</strong></article><article class="metric-card"><div class="muted-label">Balance · 6 meses</div><strong id="sixBalance">$0</strong></article><article class="metric-card"><div class="muted-label">Ahorro promedio</div><strong id="sixSavingRate">—</strong></article></div><section class="section"><h2>Ingresos y gastos</h2><div id="trendChart" class="analytics-card"></div></section><section class="section"><h2>Balance mensual</h2><div id="balanceChart" class="analytics-card"></div></section><section class="section"><h2>Distribución de gastos</h2><div id="expenseRanking" class="analytics-card"></div></section><section class="section"><h2>Fuentes de ingresos</h2><div id="incomeRanking" class="analytics-card"></div></section><section class="section"><h2>Conclusiones</h2><div id="analyticsInsights" class="insight-card"></div></section></section>
-    <section class="goals-screen" data-view="goals" id="goalsScreen" hidden><div class="section-heading"><div><div class="eyebrow">PLANIFICACIÓN</div><h2>Metas de ahorro</h2></div><button class="text-btn" id="addGoal">＋ Nueva meta</button></div><div class="goals-intro metric-card"><div class="muted-label">TU PROGRESO</div><strong id="goalsTotal">$0</strong><small id="goalsCaption">Aún no tienes metas activas</small></div><div id="goalsList" class="goals-list"></div></section>
     </main>
-<nav class="bottom-nav" aria-label="Navegación principal"><button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button><button class="nav-item" data-tab="analytics"><span>▥</span>Análisis</button><button class="nav-item nav-add" data-tab="add" aria-label="Añadir movimiento"><span>＋</span>Añadir</button><button class="nav-item" data-tab="budget"><span>◷</span>Sueldo</button><button class="nav-item" data-tab="history"><span>▤</span>Historial</button><button class="nav-item" data-tab="goals"><span>◎</span>Metas</button></nav>
+<nav class="bottom-nav" aria-label="Navegación principal"><button class="nav-item active" data-tab="home"><span>⌂</span>Inicio</button><button class="nav-item" data-tab="analytics"><span>▥</span>Análisis</button><button class="nav-item nav-add" data-tab="add" aria-label="Añadir movimiento"><span>＋</span>Añadir</button><button class="nav-item" data-tab="budget"><span>◷</span>Sueldo</button><button class="nav-item" data-tab="history"><span>▤</span>Historial</button></nav>
   </div>
   <dialog id="transactionDialog" class="modal">
     <form id="transactionForm">
@@ -71,25 +89,8 @@
       <button class="submit-btn" type="submit" id="saveTransaction">Guardar movimiento</button>
     </form>
   </dialog>
-  <dialog id="historyDialog" class="modal wide-modal">
-    <div class="modal-head"><div><div class="eyebrow">TUS REGISTROS</div><h2>Historial</h2></div><button class="close-btn" id="closeHistory">×</button></div>
-    <div class="history-tools"><select id="historyMonth" aria-label="Filtrar por mes"></select><select id="historyType" aria-label="Filtrar tipo"><option value="all">Todos</option><option value="expense">Gastos</option><option value="income">Ingresos</option></select><select id="historyCategory" aria-label="Filtrar categoría"><option value="all">Todas las categorías</option></select></div>
-    <div class="history-date-filters"><label>Desde<input id="historyFrom" type="date"></label><label>Hasta<input id="historyTo" type="date"></label></div>
-    <input class="search-input" id="historySearch" type="search" placeholder="Buscar por descripción o categoría...">
-    <div class="history-summary" id="historySummary"></div>
-    <div id="fullHistory" class="transactions-card"></div>
-    <button class="outline-btn" id="exportCsv">Exportar historial a CSV</button>
-  </dialog>
-  <dialog id="budgetDialog" class="modal">
-    <div class="modal-head"><div><div class="eyebrow">DINERO DISPONIBLE AL INICIO</div><h2>Sueldo inicial del mes</h2></div><button class="close-btn" id="closeBudget">×</button></div>
-    <p class="modal-copy">Ingresa manualmente el sueldo y dinero principal con el que comienzas este mes.</p>
-    <label for="budgetAmount">Sueldo inicial / dinero disponible (CLP)</label><input id="budgetAmount" type="number" min="0" step="1000" inputmode="numeric" placeholder="Ej. 305000">
-    <div id="budgetStatus" class="budget-status"></div>
-    <div class="budget-category-heading"><strong>Límites de gasto por categoría</strong><span>Opcional</span></div>
-    <p class="modal-copy">Opcional: establece cuánto quieres gastar como máximo en cada categoría.</p>
-    <div id="categoryBudgetFields" class="category-budget-fields"></div>
-    <button class="submit-btn" id="saveBudget">Guardar sueldo y límites</button>
-  </dialog>
+
+
   <dialog id="settingsDialog" class="modal">
     <div class="modal-head"><div><div class="eyebrow">PREFERENCIAS</div><h2>Configuración</h2></div><button class="close-btn" id="closeSettings">×</button></div>
     <div class="settings-note"><strong>Guardado en este teléfono</strong><p>Por ahora tus datos permanecen en el almacenamiento local de este navegador. La sincronización entre teléfonos requiere configurar una base de datos segura en la nube.</p></div>
@@ -98,7 +99,7 @@
     <button class="danger-btn" id="clearData">Eliminar todos mis movimientos</button>
     <p class="tiny-note">Consejo: guarda una copia antes de cambiar de teléfono o borrar los datos del navegador.</p>
   </dialog>
-  <dialog id="goalDialog" class="modal"><div class="modal-head"><div><div class="eyebrow">OBJETIVO DE AHORRO</div><h2 id="goalDialogTitle">Nueva meta</h2></div><button class="close-btn" id="closeGoal">×</button></div><label for="goalName">Nombre de la meta</label><input id="goalName" maxlength="50" placeholder="Ej. Viaje, notebook..."><label for="goalTarget">Monto objetivo (CLP)</label><input id="goalTarget" type="number" min="1" step="1000" inputmode="numeric"><label for="goalSaved">Ahorro acumulado (CLP)</label><input id="goalSaved" type="number" min="0" step="1000" inputmode="numeric" placeholder="0"><input id="goalId" type="hidden"><button class="submit-btn" id="saveGoal">Guardar meta</button></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="app.js?v=12"></script>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js?v=13"></script>
 </body>
 </html>
