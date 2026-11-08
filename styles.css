@@ -409,3 +409,34 @@ main,[data-view],.section,.section-heading,.metric-grid,
   .bottom-nav{position:sticky;bottom:0}
   .app-shell{padding-bottom:24px}
 }
+
+
+/* v36 · arte abstracto premium en la tarjeta principal */
+.hero-card{
+  isolation:isolate;
+  background-color:#17203a;
+  background-image:
+    linear-gradient(100deg,rgba(19,29,51,.94) 0%,rgba(24,29,61,.78) 52%,rgba(25,23,61,.48) 100%),
+    url("./assets/finance-abstract.svg");
+  background-size:cover;
+  background-position:center right;
+  background-repeat:no-repeat;
+  border-color:#5b5d91;
+  box-shadow:0 16px 38px rgba(68,55,150,.22),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.hero-card:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(11,19,35,.04),rgba(11,19,35,.28));
+}
+.hero-card:after{z-index:0;opacity:.48}
+.hero-top,.hero-stats,.hero-card>.progress-track,.hero-card>.progress-caption{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:430px){
+  .hero-card{background-position:58% center}
+}
