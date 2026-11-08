@@ -10,11 +10,13 @@ const assets = [
   "manifest.json",
   "sw.js",
   "icon-192.png",
-  "icon-512.png"
+  "icon-512.png",
+  "assets/finance-abstract.svg"
 ];
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
+await mkdir(resolve(output, "assets"), { recursive: true });
 for (const file of assets) {
   await cp(resolve(root, file), resolve(output, file));
 }
