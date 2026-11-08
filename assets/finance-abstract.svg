@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" fill="none">
+<defs>
+  <linearGradient id="base" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101A31"/><stop offset=".52" stop-color="#171A3C"/><stop offset="1" stop-color="#0C1428"/></linearGradient>
+  <linearGradient id="ribbon" x1=".08" y1=".1" x2=".95" y2=".9"><stop stop-color="#B5A0FF"/><stop offset=".34" stop-color="#7959F2"/><stop offset=".7" stop-color="#3D72E9"/><stop offset="1" stop-color="#9C50E9"/></linearGradient>
+  <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E7DFFF" stop-opacity=".9"/><stop offset=".48" stop-color="#9C7BFF" stop-opacity=".65"/><stop offset="1" stop-color="#5C9DFF" stop-opacity=".2"/></linearGradient>
+  <radialGradient id="glow"><stop stop-color="#9C5BFF" stop-opacity=".55"/><stop offset="1" stop-color="#6C4DFF" stop-opacity="0"/></radialGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="42"/></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="12"/></filter>
+  <pattern id="lines" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M0 16 16 0" stroke="#BCAEFF" stroke-opacity=".12" stroke-width="1"/></pattern>
+</defs>
+<rect width="1200" height="720" fill="url(#base)"/>
+<ellipse cx="850" cy="150" rx="420" ry="260" fill="url(#glow)" filter="url(#blur)"/>
+<ellipse cx="330" cy="620" rx="360" ry="180" fill="#3C4BCE" opacity=".18" filter="url(#blur)"/>
+<path d="M-80 500C160 390 280 170 510 170c205 0 230 185 420 190 125 4 205-55 350-165v340c-170 90-295 126-450 96-205-40-260-180-440-135-145 36-250 165-470 185z" fill="#241D58" opacity=".78"/>
+<path d="M-80 500C160 390 280 170 510 170c205 0 230 185 420 190 125 4 205-55 350-165" stroke="url(#ribbon)" stroke-width="78" stroke-linecap="round" opacity=".62" filter="url(#soft)"/>
+<path d="M-80 500C160 390 280 170 510 170c205 0 230 185 420 190 125 4 205-55 350-165" stroke="url(#edge)" stroke-width="3" stroke-linecap="round"/>
+<path d="M170 770C350 570 470 430 650 420c170-10 260 130 420 110 90-12 160-65 210-112" stroke="#6E8FFF" stroke-width="44" stroke-linecap="round" opacity=".32" filter="url(#soft)"/>
+<path d="M170 770C350 570 470 430 650 420c170-10 260 130 420 110 90-12 160-65 210-112" stroke="url(#ribbon)" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+<path d="M710 -60c-40 170-15 270 90 360 85 73 180 82 310 60" stroke="#B58DFF" stroke-width="2" opacity=".35"/>
+<path d="M0 0h1200v720H0z" fill="url(#lines)" opacity=".22"/>
+<circle cx="970" cy="140" r="4" fill="#D9C7FF" opacity=".8"/><circle cx="1040" cy="210" r="3" fill="#8BB9FF" opacity=".8"/><circle cx="760" cy="90" r="2.5" fill="#E4D8FF" opacity=".7"/>
+</svg>
