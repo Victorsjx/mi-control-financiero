@@ -567,7 +567,7 @@ main,[data-view],.section,.section-heading,.metric-grid,
 .lucky-coin-inner:before{content:"";position:absolute;inset:14px;border:2px dashed rgba(112,69,25,.55);border-radius:50%}
 .lucky-coin.is-rolling .lucky-coin-inner{animation:luckyCoinSpin 1.15s cubic-bezier(.18,.75,.2,1) both}
 .lucky-coin.is-buy .lucky-coin-inner{background:radial-gradient(circle at 32% 25%,#fff0bd,#f4cb70 45%,#b67d2d)}
-.lucky-coin.is-no .lucky-coin-inner{background:radial-gradient(circle at 32% 25%,#e7eaff,#aab4d7 45%,#626d9e);color:#344064;border-color:#cbd2ed}
+.lucky-coin.is-no .lucky-coin-inner{transform:rotateY(180deg);background:radial-gradient(circle at 32% 25%,#e7eaff,#aab4d7 45%,#626d9e);color:#344064;border-color:#cbd2ed}
 .coin-front,.coin-back{position:absolute;backface-visibility:hidden;text-shadow:0 2px 1px rgba(255,255,255,.35)}
 .coin-back{transform:rotateY(180deg)}
 @keyframes luckyCoinSpin{0%{transform:rotateY(0) rotateZ(-12deg) scale(.92)}35%{transform:rotateY(720deg) rotateZ(15deg) scale(1.12)}70%{transform:rotateY(1440deg) rotateZ(-8deg) scale(1.04)}100%{transform:rotateY(1800deg) rotateZ(0) scale(1)}}
