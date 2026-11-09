@@ -48,6 +48,6 @@ test("Finance Dice usa aleatoriedad criptográfica y respeta el porcentaje confi
   assert.match(app, /1000000/);
 });
 test("Finance Dice no registra apuestas ni altera los movimientos financieros", () => {
-  assert.match(app, /id=\"diceRollButton\"/);
-  assert.doesNotMatch(app, /diceRollButton[^\n]*saveState/);
+  assert.match(app, /const rollButton=\$\(\"diceRollButton\"\)/);
+  assert.doesNotMatch(app.slice(app.indexOf("/* Finance Dice:")), /saveState/);
 });
