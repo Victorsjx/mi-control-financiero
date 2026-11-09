@@ -48,6 +48,9 @@ jobs:
       - name: Instalar dependencias Capacitor
         run: npm install --no-audit --no-fund
 
+      - name: Ejecutar pruebas de humo
+        run: node --test tests/smoke.test.mjs
+
       - name: Preparar archivos web
         run: npm run build:web
 
