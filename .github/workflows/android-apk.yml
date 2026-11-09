@@ -17,6 +17,7 @@ on:
       - "package.json"
       - "capacitor.config.json"
       - "scripts/**"
+      - "tests/**"
       - ".github/workflows/android-apk.yml"
 
 permissions:
