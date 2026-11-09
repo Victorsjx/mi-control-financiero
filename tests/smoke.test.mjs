@@ -36,9 +36,9 @@ test("el Worker aplica límites si se configura el binding y timeouts externos",
 });
 
 test("la caché PWA referencia los recursos versionados actuales", () => {
-  assert.match(sw, /mi-finanzas-v37/);
-  assert.match(sw, /styles\\.css\\?v=37/);
-  assert.match(sw, /app\\.js\\?v=37/);
+  assert.match(sw, /mi-finanzas-v38/);
+  assert.match(sw, /styles\\.css\\?v=38/);
+  assert.match(sw, /app\\.js\\?v=38/);
 });
 
 test("Finance Dice usa aleatoriedad criptográfica y respeta el porcentaje configurado", () => {
