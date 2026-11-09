@@ -487,3 +487,29 @@ main,[data-view],.section,.section-heading,.metric-grid,
 @media(max-width:430px){.dice-stage{min-height:148px}.dice-cube{width:100px;height:100px;border-radius:24px}.dice-cube span{font-size:54px}.dice-card{border-radius:21px}.dice-probability{padding:13px}}
 @media(max-width:380px){.bottom-nav .nav-item{min-width:0;flex:1;padding-inline:2px}.bottom-nav .nav-item span{font-size:9px}.bottom-nav .nav-item .ui-icon{width:20px;height:20px}.bottom-nav .nav-add{flex:1.05}}
 @media(prefers-reduced-motion:reduce){.dice-cube.is-rolling{animation:none;transform:rotate(0)}}
+
+/* v38 · controles táctiles y pista de probabilidad del Dice */
+#diceChance{
+  appearance:none;-webkit-appearance:none;
+  height:8px;padding:0;border:0;border-radius:20px;
+  background:linear-gradient(to right,#e66b83 0%,#e66b83 calc(100% - var(--dice-chance,50%)),#43cf98 calc(100% - var(--dice-chance,50%)),#43cf98 100%);
+  touch-action:pan-y;pointer-events:auto;position:relative;z-index:2;
+}
+#diceChance::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+  background:#f4f0ff;border:4px solid #9c7cff;
+  box-shadow:0 2px 12px #a78bfa88;cursor:grab;
+}
+#diceChance::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;
+  background:#f4f0ff;border:4px solid #9c7cff;
+  box-shadow:0 2px 12px #a78bfa88;cursor:grab;
+}
+#diceChance:focus-visible{outline:3px solid #a78bfa;outline-offset:5px}
+.dice-roll-button{position:relative;z-index:2;pointer-events:auto;touch-action:manipulation;cursor:pointer}
+.dice-roll-button:disabled{filter:saturate(.7)}
+.dice-track span{display:block;min-width:0;transition:flex-basis .18s ease}
+.dice-cube{will-change:transform}
+@media(prefers-reduced-motion:reduce){
+ .dice-track span{transition:none}
+}
