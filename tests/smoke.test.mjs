@@ -38,12 +38,12 @@ test("el Worker aplica límites si se configura el binding y timeouts externos",
 
 test("la caché PWA referencia los recursos versionados actuales", () => {
   assert.match(sw, /mi-finanzas-v40/);
-  assert.ok(sw.includes("./styles.css?v=39"));
-  assert.ok(sw.includes("./app.js?v=39"));
-  assert.ok(sw.includes("./dice.js?v=39"));
+  assert.ok(sw.includes("./styles.css?v=40"));
+  assert.ok(sw.includes("./app.js?v=40"));
+  assert.ok(sw.includes("./dice.js?v=40"));
 });
 
-test("Finance Dice usa aleatoriedad criptográfica y respeta el porcentaje configurado", () => {
+test("Lucky Flip usa aleatoriedad criptográfica y respeta el porcentaje configurado", () => {
   assert.match(dice, /crypto\.getRandomValues/);
   assert.match(dice, /chance\*10000/);
   assert.match(dice, /draw<chance\*10000/);
@@ -51,9 +51,9 @@ test("Finance Dice usa aleatoriedad criptográfica y respeta el porcentaje confi
   assert.match(dice, /addEventListener\("input",updateChance/);
 });
 
-test("Finance Dice es independiente y no altera movimientos ni presupuesto", () => {
+test("Lucky Flip es independiente y no altera movimientos ni presupuesto", () => {
   assert.match(dice, /diceRollButton/);
-  assert.match(dice, /showDiceScreen/);
+  assert.match(dice, /showScreen/);\n  assert.match(dice, /luckyCoinSpin/);
   assert.doesNotMatch(dice, /saveState|STORAGE_KEY|transactions\.push/);
   assert.doesNotMatch(app, /Finance Dice v2/);
 });
