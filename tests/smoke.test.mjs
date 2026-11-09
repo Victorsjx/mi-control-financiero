@@ -53,7 +53,8 @@ test("Lucky Flip usa aleatoriedad criptográfica y respeta el porcentaje configu
 
 test("Lucky Flip es independiente y no altera movimientos ni presupuesto", () => {
   assert.match(dice, /diceRollButton/);
-  assert.match(dice, /showScreen/);\n  assert.match(dice, /luckyCoinSpin/);
+  assert.match(dice, /showScreen/);
+  assert.match(dice, /luckyCoinSpin/);
   assert.doesNotMatch(dice, /saveState|STORAGE_KEY|transactions\.push/);
   assert.doesNotMatch(app, /Finance Dice v2/);
 });
