@@ -1,4 +1,4 @@
-const CACHE="mi-finanzas-v39";
+const CACHE="mi-finanzas-v40";
 const ASSETS=["./","./index.html","./styles.css?v=39","./app.js?v=39","./dice.js?v=39","./manifest.json","./icon-192.png","./icon-512.png","./assets/finance-abstract.svg"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
