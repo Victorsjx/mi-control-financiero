@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const dice = await readFile(new URL("../dice.js", import.meta.url), "utf8");
 const worker = await readFile(new URL("../cloudflare/worker.js", import.meta.url), "utf8");
 const sw = await readFile(new URL("../sw.js", import.meta.url), "utf8");
 
@@ -36,18 +37,22 @@ test("el Worker aplica límites si se configura el binding y timeouts externos",
 });
 
 test("la caché PWA referencia los recursos versionados actuales", () => {
-  assert.match(sw, /mi-finanzas-v38/);
-  assert.match(sw, /styles\\.css\\?v=38/);
-  assert.match(sw, /app\\.js\\?v=38/);
+  assert.match(sw, /mi-finanzas-v39/);
+  assert.match(sw, /styles\\.css\\?v=39/);
+  assert.match(sw, /app\\.js\\?v=39/);
 });
 
 test("Finance Dice usa aleatoriedad criptográfica y respeta el porcentaje configurado", () => {
-  assert.match(app, /crypto\.getRandomValues/);
-  assert.match(app, /chance\*10000/);
-  assert.match(app, /roll<probability/);
-  assert.match(app, /1000000/);
+  assert.match(dice, /crypto\.getRandomValues/);
+  assert.match(dice, /chance\*10000/);
+  assert.match(dice, /draw<chance\*10000/);
+  assert.match(dice, /1000000/);
+  assert.match(dice, /addEventListener\("input",updateChance/);
 });
-test("Finance Dice no registra apuestas ni altera los movimientos financieros", () => {
-  assert.match(app, /const rollButton=\$\(\"diceRollButton\"\)/);
-  assert.doesNotMatch(app.slice(app.indexOf("/* Finance Dice:")), /saveState/);
+
+test("Finance Dice es independiente y no altera movimientos ni presupuesto", () => {
+  assert.match(dice, /diceRollButton/);
+  assert.match(dice, /showDiceScreen/);
+  assert.doesNotMatch(dice, /saveState|STORAGE_KEY|transactions\.push/);
+  assert.doesNotMatch(app, /Finance Dice v2/);
 });
