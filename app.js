@@ -453,50 +453,79 @@ document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEa
  ["pointerup","pointercancel","pointerleave"].forEach(event=>button.addEventListener(event,()=>button.classList.remove("is-pressed")));
 });
 
-/* Finance Dice: resultado aleatorio uniforme, independiente y sin dinero real */
+/* Finance Dice v2: controles delegados y animación explícita */
 (()=>{
- const chanceInput=$("diceChance"),chanceValue=$("diceChanceValue"),noChance=$("diceNoChance"),yesChance=$("diceYesChance");
- const noTrack=$("diceTrackNo"),yesTrack=$("diceTrackYes"),rollButton=$("diceRollButton");
- if(!chanceInput||!rollButton)return;
+ const byId=id=>document.getElementById(id);
+ const getElements=()=>({
+  input:byId("diceChance"),value:byId("diceChanceValue"),no:byId("diceNoChance"),yes:byId("diceYesChance"),
+  noTrack:byId("diceTrackNo"),yesTrack:byId("diceTrackYes"),button:byId("diceRollButton"),
+  cube:byId("diceCube"),face:byId("diceFace"),result:byId("diceResult"),detail:byId("diceDetail"),caption:byId("diceRollCaption")
+ });
  let rolling=false;
  const updateChance=()=>{
-  const chance=Number(chanceInput.value),no=100-chance;
-  chanceValue.textContent=chance+"%";noChance.textContent=no+"%";yesChance.textContent=chance+"%";
-  noTrack.style.flex=String(no);yesTrack.style.flex=String(chance);
+  const e=getElements();if(!e.input)return;
+  const chance=Math.min(99,Math.max(1,Number(e.input.value)||50)),no=100-chance;
+  e.input.value=String(chance);
+  if(e.value)e.value.textContent=chance+"%";
+  if(e.no)e.no.textContent=no+"%";
+  if(e.yes)e.yes.textContent=chance+"%";
+  if(e.noTrack)e.noTrack.style.flex="0 0 "+no+"%";
+  if(e.yesTrack)e.yesTrack.style.flex="0 0 "+chance+"%";
+  if(e.input)e.input.style.setProperty("--dice-chance",chance+"%");
  };
- // Rejection sampling avoids modulo bias when converting secure random bits.
  const secureRandomBelow=max=>{
-  if(!globalThis.crypto?.getRandomValues)throw new Error("Este dispositivo no dispone de un generador aleatorio seguro.");
+  if(!globalThis.crypto||typeof globalThis.crypto.getRandomValues!=="function")throw new Error("El navegador no permite generar un resultado seguro. Abre la app desde HTTPS.");
   const range=0x100000000,limit=Math.floor(range/max)*max,buffer=new Uint32Array(1);
-  let value;
-  do{crypto.getRandomValues(buffer);value=buffer[0]}while(value>=limit);
+  let value;do{globalThis.crypto.getRandomValues(buffer);value=buffer[0]}while(value>=limit);
   return value%max;
  };
- chanceInput.addEventListener("input",updateChance);
- updateChance();
- rollButton.addEventListener("click",()=>{
-  if(rolling)return;
-  rolling=true;rollButton.disabled=true;
-  const cube=$("diceCube"),face=$("diceFace"),result=$("diceResult"),detail=$("diceDetail"),caption=$("diceRollCaption");
-  result.classList.remove("is-buy","is-no");
-  result.textContent="Lanzando…";detail.textContent="Generando un resultado aleatorio.";caption.textContent="DADO EN MOVIMIENTO";
-  cube.classList.remove("is-rolling");void cube.offsetWidth;cube.classList.add("is-rolling");
+ const rollDice=()=>{
+  const e=getElements();if(rolling||!e.button||!e.input)return;
+  rolling=true;e.button.disabled=true;
+  if(e.result){e.result.classList.remove("is-buy","is-no");e.result.textContent="Lanzando…"}
+  if(e.detail)e.detail.textContent="Generando un resultado aleatorio.";
+  if(e.caption)e.caption.textContent="DADO EN MOVIMIENTO";
+  if(e.cube){
+   e.cube.classList.remove("is-rolling");
+   e.cube.style.transform="";
+   if(e.face)e.face.textContent="🎲";
+   if(typeof e.cube.animate==="function"){
+    e.cube.animate([
+     {transform:"rotate(-7deg) scale(1)"},
+     {transform:"rotate(95deg) scale(.88)"},
+     {transform:"rotate(210deg) scale(1.08)"},
+     {transform:"rotate(350deg) scale(.94)"},
+     {transform:"rotate(520deg) scale(1.06)"},
+     {transform:"rotate(713deg) scale(1)"}
+    ],{duration:1150,easing:"cubic-bezier(.2,.7,.2,1)"});
+   }else e.cube.classList.add("is-rolling");
+  }
   let roll,chance;
-  try{chance=Number(chanceInput.value);roll=secureRandomBelow(1000000)}
+  try{chance=Number(e.input.value);roll=secureRandomBelow(1000000)}
   catch(error){
-   cube.classList.remove("is-rolling");face.textContent="🎲";caption.textContent="NO SE PUDO LANZAR";
-   result.textContent="No disponible";result.classList.add("is-no");detail.textContent=error.message;
-   rollButton.disabled=false;rolling=false;return;
+   if(e.caption)e.caption.textContent="NO SE PUDO LANZAR";
+   if(e.result){e.result.textContent="No disponible";e.result.classList.add("is-no")}
+   if(e.detail)e.detail.textContent=error.message;
+   e.button.disabled=false;rolling=false;return;
   }
   window.setTimeout(()=>{
-   const probability=chance*10000,buy=roll<probability;
-   face.textContent=String(Math.floor(roll/10000));
-   caption.textContent="RESULTADO "+(roll/10000).toFixed(2).replace(".",",");
-   result.textContent=buy?"¡COMPRAR!":"NO COMPRAR";
-   result.classList.toggle("is-buy",buy);result.classList.toggle("is-no",!buy);
-   detail.textContent=buy?"El resultado cayó en la zona verde. ¡Tú decides con responsabilidad!":"El resultado cayó en la zona roja. Mejor guarda esas lucas.";
-   cube.classList.remove("is-rolling");cube.style.transform=buy?"rotate(5deg)":"rotate(-5deg)";
-   rollButton.disabled=false;rolling=false;
-  },1050);
- });
+   const normalized=roll/10000,buy=roll<chance*10000;
+   if(e.face)e.face.textContent=normalized.toFixed(2).replace(".",",");
+   if(e.caption)e.caption.textContent="RESULTADO "+normalized.toFixed(2).replace(".",",");
+   if(e.result){e.result.textContent=buy?"¡COMPRAR!":"NO COMPRAR";e.result.classList.toggle("is-buy",buy);e.result.classList.toggle("is-no",!buy)}
+   if(e.detail)e.detail.textContent=buy?"Resultado en la zona verde. Revisa tu presupuesto antes de decidir.":"Resultado en la zona roja. Mejor guarda esas lucas.";
+   if(e.cube)e.cube.style.transform=buy?"rotate(5deg)":"rotate(-5deg)";
+   e.button.disabled=false;rolling=false;
+  },1150);
+ };
+ const bind=()=>{
+  const e=getElements();if(!e.input||!e.button)return false;
+  e.input.oninput=updateChance;e.input.onchange=updateChance;
+  e.button.onclick=event=>{event.preventDefault();rollDice()};
+  updateChance();
+  const diceNav=document.querySelector('.nav-item[data-tab="dice"]');
+  if(diceNav&&typeof switchTab==="function")diceNav.onclick=()=>switchTab("dice");
+  return true;
+ };
+ if(!bind())document.addEventListener("DOMContentLoaded",bind,{once:true});
 })();
