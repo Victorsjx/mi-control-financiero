@@ -83,12 +83,14 @@
         <div class="dice-heading">
           <div class="eyebrow">DECISIÓN AL AZAR</div>
           <h2>¿Me lo compro?</h2>
-          <p>Deja que el azar decida esta vez. Tú mantienes el control de tu dinero.</p>
+          <p>Ajusta las probabilidades y deja que Lucky Flip lance la moneda. Tú mantienes el control de tu dinero.</p>
         </div>
         <div class="dice-card">
-          <div class="dice-brand"><span class="dice-brand-icon">✦</span><span>FINANCE DICE</span><span class="dice-live">RANDOM</span></div>
+          <div class="dice-brand"><span class="dice-brand-icon">✦</span><span>LUCKY FLIP</span><span class="dice-live">COIN TOSS</span></div>
           <div class="dice-stage" id="diceStage" aria-live="polite">
-            <div class="dice-cube" id="diceCube"><span id="diceFace">🎲</span></div>
+            <div class="lucky-coin" id="diceCube" role="img" aria-label="Moneda lista para lanzar">
+              <div class="lucky-coin-inner" id="diceFace"><span class="coin-front">★</span><span class="coin-back">✓</span></div>
+            </div>
           </div>
           <div class="dice-roll-caption" id="diceRollCaption">LISTO PARA LANZAR</div>
           <div class="dice-result" id="diceResult" aria-live="assertive">¿Te das el gusto?</div>
@@ -99,8 +101,8 @@
             <div class="dice-odds" id="diceOdds"><span><i class="dice-dot red"></i><b id="diceNoChance">50%</b> NO COMPRAR</span><span><i class="dice-dot green"></i><b id="diceYesChance">50%</b> COMPRAR</span></div>
           </div>
           <div class="dice-track" aria-hidden="true"><span id="diceTrackNo"></span><span id="diceTrackYes"></span></div>
-          <button type="button" class="dice-roll-button" id="diceRollButton"><span>LANZAR DICE</span><b>↗</b></button>
-          <p class="dice-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg> Solo es un juego de decisión. No usa dinero real ni modifica tus registros.</p>
+          <button type="button" class="dice-roll-button" id="diceRollButton"><span>LANZAR MONEDA</span><b>↗</b></button>
+          <p class="dice-footnote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg> Es solo un juego de decisión. No usa dinero real ni modifica tus registros.</p>
         </div>
         <div class="dice-disclaimer"><strong>Un recordatorio:</strong> aunque salga COMPRAR, revisa primero que la compra quepa en tu presupuesto y cubra tus necesidades.</div>
       </section>
@@ -161,8 +163,8 @@
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-  <script src="app.js?v=39"></script>
-  <script src="dice.js?v=39"></script>
+  <script src="app.js?v=40"></script>
+  <script src="dice.js?v=40"></script>
   <script>
   (() => {
     const KEY = "mi-control-financiero-assistant-v1";
