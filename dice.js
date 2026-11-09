@@ -50,11 +50,9 @@
  function init(){
   if(initialized)return;const e=els();if(!e.screen||!e.input||!e.button||!e.track||!e.coin)return;initialized=true;
   e.input.addEventListener("input",updateChance);e.input.addEventListener("change",updateChance);
-  e.button.addEventListener("click",event=>{event.preventDefault();roll();});
-  document.addEventListener("click",event=>{
-   const nav=event.target.closest&&event.target.closest('.nav-item[data-tab="dice"]');if(!nav)return;
-   event.preventDefault();event.stopPropagation();if(event.stopImmediatePropagation)event.stopImmediatePropagation();showScreen();
-  },true);
+  e.button.onclick=event=>{event.preventDefault();roll();};
+  window.luckyFlipRoll=roll;
+  document.querySelectorAll('.nav-item[data-tab="dice"]').forEach(nav=>{nav.onclick=event=>{event.preventDefault();event.stopPropagation();showScreen();};});
   updateChance();
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
