@@ -12,6 +12,7 @@ on:
       - "sw.js"
       - "icon-192.png"
       - "icon-512.png"
+      - "assets/**"
       - "package.json"
       - "capacitor.config.json"
       - "scripts/**"
