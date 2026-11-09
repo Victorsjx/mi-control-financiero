@@ -490,7 +490,7 @@ document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEa
   }
   window.setTimeout(()=>{
    const probability=chance*10000,buy=roll<probability;
-   face.textContent=String(Math.floor(roll/10000)+1);
+   face.textContent=String(Math.floor(roll/10000));
    caption.textContent="RESULTADO "+(roll/10000).toFixed(2).replace(".",",");
    result.textContent=buy?"¡COMPRAR!":"NO COMPRAR";
    result.classList.toggle("is-buy",buy);result.classList.toggle("is-no",!buy);
