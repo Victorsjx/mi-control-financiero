@@ -440,3 +440,50 @@ main,[data-view],.section,.section-heading,.metric-grid,
 @media(max-width:430px){
   .hero-card{background-position:58% center}
 }
+
+
+/* v37 · Finance Dice: decisión aleatoria con probabilidad configurable */
+.dice-screen{padding-bottom:22px}
+.dice-heading{margin:4px 0 18px}
+.dice-heading h2{margin:5px 0 7px;font-size:clamp(25px,6vw,32px);letter-spacing:-.7px}
+.dice-heading p{margin:0;color:#9eafc4;font-size:13px;line-height:1.55;max-width:520px}
+.dice-card{
+  position:relative;overflow:hidden;padding:clamp(17px,4vw,25px);
+  border:1px solid #554c86;border-radius:25px;
+  background:radial-gradient(ellipse at 50% 18%,rgba(118,83,220,.24),transparent 48%),linear-gradient(145deg,#1b2942,#141d32 66%,#1b2140);
+  box-shadow:0 18px 42px rgba(4,8,20,.25),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.dice-brand{display:flex;align-items:center;gap:9px;color:#c7b9ff;font-size:11px;font-weight:850;letter-spacing:1.8px}
+.dice-brand-icon{display:grid;place-items:center;width:26px;height:26px;border-radius:9px;background:#34275d;color:#c8b5ff;font-size:16px}
+.dice-live{margin-left:auto;padding:5px 8px;border:1px solid #3b526b;border-radius:20px;color:#8fa4bd;font-size:9px;letter-spacing:1px}
+.dice-stage{display:grid;place-items:center;min-height:166px;padding:13px 0 2px}
+.dice-cube{display:grid;place-items:center;width:112px;height:112px;border-radius:27px;background:linear-gradient(145deg,#9c7bff,#6547c9 58%,#3d3c91);box-shadow:0 14px 35px rgba(113,83,231,.32),inset 0 2px 2px rgba(255,255,255,.42),inset 0 -8px 18px rgba(22,14,67,.25);border:1px solid rgba(215,203,255,.65);transform:rotate(-7deg);transition:transform .25s ease}
+.dice-cube span{font-size:60px;filter:drop-shadow(0 5px 6px rgba(20,10,55,.22))}
+.dice-cube.is-rolling{animation:diceShake 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes diceShake{0%{transform:rotate(-7deg) scale(1)}15%{transform:rotate(85deg) scale(.88)}35%{transform:rotate(205deg) scale(1.08)}55%{transform:rotate(335deg) scale(.94)}75%{transform:rotate(485deg) scale(1.04)}100%{transform:rotate(713deg) scale(1)}}
+.dice-roll-caption{text-align:center;color:#9caec5;font-size:9px;font-weight:850;letter-spacing:2px}
+.dice-result{margin:8px 0 3px;text-align:center;color:#f4f5ff;font-size:clamp(23px,6vw,30px);font-weight:900;letter-spacing:-.5px}
+.dice-result.is-buy{color:#55d9a0}.dice-result.is-no{color:#ff8195}
+.dice-result-detail{text-align:center;color:#a6b6cc;font-size:12px;min-height:19px}
+.dice-probability{margin:25px 0 12px;padding:15px;border:1px solid #354762;border-radius:17px;background:rgba(9,17,31,.38)}
+.dice-probability-head{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#aabbd0;font-size:10px;font-weight:800;letter-spacing:.8px}
+.dice-probability-head strong{color:#c1adff;font-size:23px;letter-spacing:0;font-variant-numeric:tabular-nums}
+#diceChance{display:block;width:100%;margin:13px 0 10px;accent-color:#a78bfa;cursor:pointer}
+.dice-odds{display:flex;justify-content:space-between;gap:8px;color:#9eafc4;font-size:9px;font-weight:750}
+.dice-odds span{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.dice-odds span:last-child{justify-content:flex-end}
+.dice-odds b{color:#e8edf8;font-size:11px}
+.dice-dot{width:7px;height:7px;border-radius:50%}.dice-dot.red{background:#ee7088}.dice-dot.green{background:#42ce91}
+.dice-track{display:flex;gap:3px;height:9px;margin:0 1px 17px;overflow:hidden;border-radius:20px;background:#263750}
+.dice-track span:first-child{background:linear-gradient(90deg,#e25d78,#f28a91);border-radius:20px 0 0 20px}
+.dice-track span:last-child{background:linear-gradient(90deg,#2ebc86,#5ce0a9);border-radius:0 20px 20px 0}
+.dice-roll-button{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;min-height:57px;border:1px solid #b6a1ff;border-radius:16px;background:linear-gradient(110deg,#8767ed,#6546d4);color:#fff;font-size:14px;font-weight:900;letter-spacing:1.2px;box-shadow:0 9px 24px rgba(110,79,222,.3);transition:transform .18s,filter .18s}
+.dice-roll-button b{font-size:19px}.dice-roll-button:active{transform:scale(.98);filter:brightness(1.12)}.dice-roll-button:disabled{opacity:.65}
+.dice-footnote{display:flex;align-items:flex-start;gap:7px;margin:15px 2px 0;color:#93a5bd;font-size:10px;line-height:1.5}
+.dice-footnote svg{flex:0 0 15px;width:15px;height:15px;stroke:#7cdbb2;stroke-width:1.7;fill:none}
+.dice-disclaimer{margin-top:13px;padding:13px 15px;border:1px solid #394a64;border-radius:14px;background:#1a2940;color:#9fb0c6;font-size:11px;line-height:1.55}
+.dice-disclaimer strong{color:#e4eaf5}
+.nav-item[data-tab="dice"] .ui-icon{color:#a78bfa}
+@media(max-width:430px){.dice-stage{min-height:148px}.dice-cube{width:100px;height:100px;border-radius:24px}.dice-cube span{font-size:54px}.dice-card{border-radius:21px}.dice-probability{padding:13px}}
+@media(max-width:380px){.bottom-nav .nav-item{min-width:0;flex:1;padding-inline:2px}.bottom-nav .nav-item span{font-size:9px}.bottom-nav .nav-item .ui-icon{width:20px;height:20px}.bottom-nav .nav-add{flex:1.05}}
+@media(prefers-reduced-motion:reduce){.dice-cube.is-rolling{animation:none;transform:rotate(0)}}
