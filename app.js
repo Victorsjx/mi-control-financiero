@@ -452,3 +452,51 @@ document.querySelectorAll(".action-btn,.nav-add,.submit-btn,.outline-btn").forEa
  button.addEventListener("pointerdown",()=>button.classList.add("is-pressed"));
  ["pointerup","pointercancel","pointerleave"].forEach(event=>button.addEventListener(event,()=>button.classList.remove("is-pressed")));
 });
+
+/* Finance Dice: resultado aleatorio uniforme, independiente y sin dinero real */
+(()=>{
+ const chanceInput=$("diceChance"),chanceValue=$("diceChanceValue"),noChance=$("diceNoChance"),yesChance=$("diceYesChance");
+ const noTrack=$("diceTrackNo"),yesTrack=$("diceTrackYes"),rollButton=$("diceRollButton");
+ if(!chanceInput||!rollButton)return;
+ let rolling=false;
+ const updateChance=()=>{
+  const chance=Number(chanceInput.value),no=100-chance;
+  chanceValue.textContent=chance+"%";noChance.textContent=no+"%";yesChance.textContent=chance+"%";
+  noTrack.style.flex=String(no);yesTrack.style.flex=String(chance);
+ };
+ // Rejection sampling avoids modulo bias when converting secure random bits.
+ const secureRandomBelow=max=>{
+  if(!globalThis.crypto?.getRandomValues)throw new Error("Este dispositivo no dispone de un generador aleatorio seguro.");
+  const range=0x100000000,limit=Math.floor(range/max)*max,buffer=new Uint32Array(1);
+  let value;
+  do{crypto.getRandomValues(buffer);value=buffer[0]}while(value>=limit);
+  return value%max;
+ };
+ chanceInput.addEventListener("input",updateChance);
+ updateChance();
+ rollButton.addEventListener("click",()=>{
+  if(rolling)return;
+  rolling=true;rollButton.disabled=true;
+  const cube=$("diceCube"),face=$("diceFace"),result=$("diceResult"),detail=$("diceDetail"),caption=$("diceRollCaption");
+  result.classList.remove("is-buy","is-no");
+  result.textContent="Lanzando…";detail.textContent="Generando un resultado aleatorio.";caption.textContent="DADO EN MOVIMIENTO";
+  cube.classList.remove("is-rolling");void cube.offsetWidth;cube.classList.add("is-rolling");
+  let roll,chance;
+  try{chance=Number(chanceInput.value);roll=secureRandomBelow(1000000)}
+  catch(error){
+   cube.classList.remove("is-rolling");face.textContent="🎲";caption.textContent="NO SE PUDO LANZAR";
+   result.textContent="No disponible";result.classList.add("is-no");detail.textContent=error.message;
+   rollButton.disabled=false;rolling=false;return;
+  }
+  window.setTimeout(()=>{
+   const probability=chance*10000,buy=roll<probability;
+   face.textContent=String(Math.floor(roll/10000)+1);
+   caption.textContent="RESULTADO "+(roll/10000).toFixed(2).replace(".",",");
+   result.textContent=buy?"¡COMPRAR!":"NO COMPRAR";
+   result.classList.toggle("is-buy",buy);result.classList.toggle("is-no",!buy);
+   detail.textContent=buy?"El resultado cayó en la zona verde. ¡Tú decides con responsabilidad!":"El resultado cayó en la zona roja. Mejor guarda esas lucas.";
+   cube.classList.remove("is-rolling");cube.style.transform=buy?"rotate(5deg)":"rotate(-5deg)";
+   rollButton.disabled=false;rolling=false;
+  },1050);
+ });
+})();
